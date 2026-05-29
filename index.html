@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SIVE — Salud Integral Vocacional Estudiantil. Corporación de salud para la comunidad estudiantil.">
+  <title>SIVE — Salud Integral Vocacional Estudiantil</title>
+  <link rel="icon" type="image/jpeg" href="/logo_sive.jpeg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       BARRA SUPERIOR
+  ══════════════════════════════════════ -->
+  <div class="topbar">
+    <a onclick="openAdmin()"><i class="fa-solid fa-lock"></i> Administrador Blog</a>
+    <span class="tb-sep">|</span>
+    <a href="https://www.instagram.com/corporacion_sive" target="_blank" rel="noopener">
+      <i class="fa-brands fa-instagram"></i> @corporacion_sive
+    </a>
+    <span class="tb-sep">|</span>
+    <a onclick="goTo('contacto')"><i class="fa-solid fa-envelope"></i> Contacto</a>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════ -->
+  <nav class="nav">
+    <div class="nav-logo" onclick="goTo('inicio')">
+      <img src="logo_sive.jpeg" alt="SIVE Logo">
+      <div>
+        <span class="nl-brand">SIVE</span>
+        <span class="nl-sub">Salud Integral Vocacional Estudiantil</span>
+      </div>
+    </div>
+    <ul class="nav-links">
+      <li><button onclick="goTo('inicio')">Inicio</button></li>
+      <li><button onclick="goTo('nosotros')">Nosotros</button></li>
+      <li><button onclick="goTo('servicios')">Servicios</button></li>
+      <li><button onclick="goTo('fundadores')">Fundadores</button></li>
+      <li><button onclick="goTo('blog')">Blog</button></li>
+      <li><button class="nav-cta" onclick="goTo('contacto')">Contáctanos</button></li>
+    </ul>
+  </nav>
+
+  <!-- ══════════════════════════════════════
+       HERO
+  ══════════════════════════════════════ -->
+  <section id="inicio" class="hero">
+
+    <div class="hero-left">
+      <div class="hero-text">
+        <div class="hero-badge">
+          <i class="fa-solid fa-heart-pulse"></i> Corporación de Salud Estudiantil
+        </div>
+        <h1>Salud integral<br>para cada<br><span>estudiante</span></h1>
+        <p class="hero-sub">
+          SIVE promueve el bienestar físico, mental y social de la comunidad estudiantil
+          vocacional a través de servicios de salud accesibles, brigadas y educación preventiva.
+        </p>
+        <div class="hero-btns">
+          <button class="btn-p" onclick="goTo('servicios')">
+            <i class="fa-solid fa-stethoscope"></i> Nuestros Servicios
+          </button>
+          <button class="btn-o" onclick="goTo('nosotros')">
+            <i class="fa-solid fa-circle-info"></i> Conócenos
+          </button>
+        </div>
+        <div class="hero-stats">
+          <div>
+            <div class="hstat-num">6</div>
+            <div class="hstat-lbl">Servicios de salud</div>
+          </div>
+          <div>
+            <div class="hstat-num">79+</div>
+            <div class="hstat-lbl">Comunidad digital</div>
+          </div>
+          <div>
+            <div class="hstat-num">100%</div>
+            <div class="hstat-lbl">Compromiso</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <img
+        src="https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&w=900&q=80"
+        alt="Salud estudiantil"
+        loading="eager">
+      <div class="hero-img-card">
+        <div class="hic-ico">🎓</div>
+        <div>
+          <div class="hic-num">SIVE</div>
+          <div class="hic-lbl">Corporación estudiantil</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ══════════════════════════════════════
+       STRIP ESTADÍSTICAS
+  ══════════════════════════════════════ -->
+  <div class="strip">
+    <div class="strip-item">
+      <div class="strip-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+      <div class="strip-num">Salud</div>
+      <div class="strip-lbl">Integral</div>
+    </div>
+    <div class="strip-item">
+      <div class="strip-icon"><i class="fa-solid fa-people-group"></i></div>
+      <div class="strip-num">Brigadas</div>
+      <div class="strip-lbl">De formación</div>
+    </div>
+    <div class="strip-item">
+      <div class="strip-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+      <div class="strip-num">Vocacional</div>
+      <div class="strip-lbl">Estudiantil</div>
+    </div>
+    <div class="strip-item">
+      <div class="strip-icon"><i class="fa-solid fa-calendar-check"></i></div>
+      <div class="strip-num">2025</div>
+      <div class="strip-lbl">Fundación</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       NOSOTROS
+  ══════════════════════════════════════ -->
+  <section id="nosotros" class="sec sw">
+    <div class="ctn">
+      <div class="ab-layout">
+
+        <div class="ab-img-wrap">
+          <img
+            src="https://images.unsplash.com/photo-1530026405186-ed1f139313f8?auto=format&fit=crop&w=800&q=80"
+            alt="Equipo SIVE"
+            loading="lazy">
+          <div class="ab-img-badge">
+            <span class="aib-ico">💙</span>
+            <div class="aib-text">
+              <strong>Voluntariado estudiantil</strong>
+              <span>Brigadas de salud activas</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ab-right">
+          <div class="sec-hd">
+            <p class="eyebrow"><i class="fa-solid fa-users"></i> ¿Quiénes somos?</p>
+            <h2 class="sec-title">Comprometidos con la<br>salud estudiantil</h2>
+          </div>
+          <p class="ab-p">SIVE es una corporación comprometida con la salud integral de la comunidad estudiantil vocacional. Nació con la convicción de que el acceso a la salud es un derecho fundamental para el desarrollo académico y personal.</p>
+          <p class="ab-p">A través de brigadas de salud, formación y voluntariado estudiantil, trabajamos para transformar positivamente la calidad de vida de los estudiantes y sus comunidades.</p>
+          <p class="ab-p">Creemos que un estudiante sano aprende mejor, crece más y construye un futuro más fuerte para todos.</p>
+          <div class="pills">
+            <span class="pill"><i class="fa-solid fa-check"></i> Atención integral</span>
+            <span class="pill"><i class="fa-solid fa-shield-halved"></i> Enfoque preventivo</span>
+            <span class="pill"><i class="fa-solid fa-hands-helping"></i> Voluntariado</span>
+            <span class="pill"><i class="fa-solid fa-truck-medical"></i> Brigadas de salud</span>
+            <span class="pill"><i class="fa-solid fa-heart"></i> Inclusión</span>
+            <span class="pill"><i class="fa-solid fa-earth-americas"></i> Responsabilidad social</span>
+          </div>
+          <div class="mv-cards">
+            <div class="mv-card">
+              <p class="mv-lbl">Misión</p>
+              <p class="mv-txt">Brindar servicios de salud integral, accesibles y de calidad a la comunidad estudiantil vocacional, promoviendo hábitos saludables y el bienestar físico, mental y social.</p>
+            </div>
+            <div class="mv-card">
+              <p class="mv-lbl">Visión</p>
+              <p class="mv-txt">Ser la corporación líder en salud estudiantil, reconocida por transformar la calidad de vida de los estudiantes a nivel nacional.</p>
+            </div>
+            <div class="mv-card">
+              <p class="mv-lbl">Valores</p>
+              <p class="mv-txt">Compromiso, humanidad, excelencia, inclusión y responsabilidad social guían cada una de nuestras acciones e iniciativas de salud.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       SERVICIOS
+  ══════════════════════════════════════ -->
+  <section id="servicios" class="sec sg">
+    <div class="ctn">
+      <div class="sec-hd c">
+        <p class="eyebrow c"><i class="fa-solid fa-stethoscope"></i> Lo que ofrecemos</p>
+        <h2 class="sec-title">Servicios de Salud Integral</h2>
+        <p class="sec-desc c">Programas y servicios diseñados para cubrir todas las necesidades de salud de la comunidad estudiantil.</p>
+      </div>
+      <div class="srv-grid">
+
+        <div class="srv-card">
+          <div class="srv-img-wrap">
+            <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=600&q=75" alt="Consultas médicas" loading="lazy">
+          </div>
+          <div class="srv-body">
+            <div class="srv-ico-wrap">⚕️</div>
+            <h3>Consultas Médicas Integrales</h3>
+            <p>Atención médica personalizada con enfoque preventivo y bienestar vocacional estudiantil.</p>
+            <span class="srv-tag"><i class="fa-solid fa-arrow-up-right-from-square"></i> Atención Primaria</span>
+          </div>
+        </div>
+
+        <div class="srv-card">
+          <div class="srv-img-wrap">
+            <img src="https://images.unsplash.com/photo-1493836512294-502baa1986e2?auto=format&fit=crop&w=600&q=75" alt="Salud mental" loading="lazy">
+          </div>
+          <div class="srv-body">
+            <div class="srv-ico-wrap">🧠</div>
+            <h3>Salud Mental y Emocional</h3>
+            <p>Apoyo psicológico y orientación emocional para desafíos académicos y personales.</p>
+            <span class="srv-tag"><i class="fa-solid fa-arrow-up-right-from-square"></i> Bienestar Mental</span>
+          </div>
+        </div>
+
+        <div class="srv-card">
+          <div class="srv-img-wrap">
+            <img src="https://images.unsplash.com/photo-1498837167922-ddd27525d352?auto=format&fit=crop&w=600&q=75" alt="Nutrición" loading="lazy">
+          </div>
+          <div class="srv-body">
+            <div class="srv-ico-wrap">🥗</div>
+            <h3>Nutrición y Bienestar</h3>
+            <p>Asesoría nutricional para optimizar energía y rendimiento académico estudiantil.</p>
+            <span class="srv-tag"><i class="fa-solid fa-arrow-up-right-from-square"></i> Hábitos Saludables</span>
+          </div>
+        </div>
+
+        <div class="srv-card">
+          <div class="srv-img-wrap">
+            <img src="https://images.unsplash.com/photo-1584820927498-cfe5211fd8bf?auto=format&fit=crop&w=600&q=75" alt="Medicina preventiva" loading="lazy">
+          </div>
+          <div class="srv-body">
+            <div class="srv-ico-wrap">🛡️</div>
+            <h3>Medicina Preventiva</h3>
+            <p>Vacunación, tamizajes y educación para prevenir enfermedades en la comunidad.</p>
+            <span class="srv-tag"><i class="fa-solid fa-arrow-up-right-from-square"></i> Prevención</span>
+          </div>
+        </div>
+
+        <div class="srv-card">
+          <div class="srv-img-wrap">
+            <img src="https://images.unsplash.com/photo-1559757175-5700dde675bc?auto=format&fit=crop&w=600&q=75" alt="Salud sexual" loading="lazy">
+          </div>
+          <div class="srv-body">
+            <div class="srv-ico-wrap">❤️</div>
+            <h3>Salud Sexual y Reproductiva</h3>
+            <p>Educación responsable y confidencial para decisiones informadas y seguras.</p>
+            <span class="srv-tag"><i class="fa-solid fa-arrow-up-right-from-square"></i> Educación</span>
+          </div>
+        </div>
+
+        <div class="srv-card">
+          <div class="srv-img-wrap">
+            <img src="https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=600&q=75" alt="Primeros auxilios" loading="lazy">
+          </div>
+          <div class="srv-body">
+            <div class="srv-ico-wrap">🩺</div>
+            <h3>Primeros Auxilios</h3>
+            <p>Capacitación en respuesta a emergencias para toda la comunidad estudiantil.</p>
+            <span class="srv-tag"><i class="fa-solid fa-arrow-up-right-from-square"></i> Emergencias</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       BANNER CTA
+  ══════════════════════════════════════ -->
+  <div class="cta-banner">
+    <h2>¿Quieres ser parte de SIVE?</h2>
+    <p>Únete a nuestro equipo de voluntarios y ayuda a transformar la salud de tu comunidad estudiantil.</p>
+    <div class="cta-btns">
+      <button class="btn-p" onclick="goTo('contacto')">
+        <i class="fa-solid fa-handshake"></i> Únete a la corporación
+      </button>
+      <button class="btn-o" onclick="goTo('blog')">
+        <i class="fa-solid fa-book-open"></i> Leer el Blog
+      </button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       FUNDADORES
+  ══════════════════════════════════════ -->
+  <section id="fundadores" class="sec sw">
+    <div class="ctn">
+      <div class="sec-hd c">
+        <p class="eyebrow c"><i class="fa-solid fa-star"></i> Liderazgo</p>
+        <h2 class="sec-title">Equipo Fundador</h2>
+        <p class="sec-desc c">Los líderes que hicieron posible SIVE con visión, compromiso y vocación de servicio estudiantil.</p>
+      </div>
+      <div class="fnd-grid">
+
+        <div class="fnd-card">
+          <div class="fnd-av-wrap" style="background:#1e3a6e">YR</div>
+          <div class="fnd-body">
+            <div class="fnd-name">Yerly Karina Ramos Figueredo</div>
+            <div class="fnd-role">Presidenta</div>
+            <div class="fnd-hr"></div>
+            <span class="fnd-tag"><i class="fa-solid fa-star"></i> Co-Fundadora · SIVE</span>
+          </div>
+        </div>
+
+        <div class="fnd-card">
+          <div class="fnd-av-wrap" style="background:#4d8a7c">KP</div>
+          <div class="fnd-body">
+            <div class="fnd-name">Keila Belén Pérez Quintero</div>
+            <div class="fnd-role">Vicepresidenta</div>
+            <div class="fnd-hr"></div>
+            <span class="fnd-tag"><i class="fa-solid fa-star"></i> Co-Fundadora · SIVE</span>
+          </div>
+        </div>
+
+        <div class="fnd-card">
+          <div class="fnd-av-wrap" style="background:#2e6db4">JF</div>
+          <div class="fnd-body">
+            <div class="fnd-name">Jersson Esteban Fuentes Parra</div>
+            <div class="fnd-role">Secretario</div>
+            <div class="fnd-hr"></div>
+            <span class="fnd-tag"><i class="fa-solid fa-star"></i> Co-Fundador · SIVE</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       GALERÍA BRIGADAS
+  ══════════════════════════════════════ -->
+  <section class="sec sg">
+    <div class="ctn">
+      <div class="sec-hd">
+        <p class="eyebrow"><i class="fa-solid fa-images"></i> Nuestra comunidad</p>
+        <h2 class="sec-title">Brigadas y Actividades</h2>
+        <p class="sec-desc">Momentos de impacto real en la comunidad estudiantil — salud en acción.</p>
+      </div>
+      <div class="gallery-grid">
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=800&q=75" alt="Brigada de salud" loading="lazy">
+          <div class="gallery-overlay"><span>Brigadas de salud</span></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?auto=format&fit=crop&w=500&q=75" alt="Consultas médicas" loading="lazy">
+          <div class="gallery-overlay"><span>Consultas médicas</span></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1551076805-e1869033e561?auto=format&fit=crop&w=500&q=75" alt="Formación" loading="lazy">
+          <div class="gallery-overlay"><span>Formación</span></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1526256262350-7da7584cf5eb?auto=format&fit=crop&w=500&q=75" alt="Voluntariado" loading="lazy">
+          <div class="gallery-overlay"><span>Voluntariado</span></div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=500&q=75" alt="Atención estudiantil" loading="lazy">
+          <div class="gallery-overlay"><span>Atención estudiantil</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       BLOG (posts los llena app.js)
+  ══════════════════════════════════════ -->
+  <section id="blog" class="sec sw">
+    <div class="ctn">
+      <div class="blog-head">
+        <div>
+          <p class="eyebrow"><i class="fa-solid fa-newspaper"></i> Artículos y noticias</p>
+          <h2 class="sec-title">Blog de Salud SIVE</h2>
+          <p class="sec-desc">Información y consejos sobre salud integral para la comunidad estudiantil.</p>
+        </div>
+        <button class="btn-outline-navy" onclick="openAdmin()">
+          <i class="fa-solid fa-plus"></i> Publicar artículo
+        </button>
+      </div>
+      <!-- app.js llena este contenedor -->
+      <div class="blg-grid" id="blog-grid">
+        <div class="blg-empty">
+          <div class="blg-empty-ico">📰</div>
+          <p class="blg-empty-title">Próximamente</p>
+          <p>Aquí aparecerán los artículos del equipo SIVE.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       CONTACTO
+  ══════════════════════════════════════ -->
+  <section id="contacto" class="sec sn">
+    <div class="ctn">
+      <div class="ct-grid">
+
+        <div class="ct-txt">
+          <p class="eyebrow ct-eyebrow"><i class="fa-solid fa-location-dot"></i> Estamos aquí</p>
+          <h2 class="sec-title lt">Conéctate con SIVE</h2>
+          <p class="ct-desc">¿Tienes preguntas sobre nuestros servicios o quieres unirte a la corporación? Escríbenos.</p>
+          <div class="ct-list">
+            <div class="ct-item">
+              <div class="ct-ico"><i class="fa-solid fa-envelope"></i></div>
+              <div>
+                <div class="ct-lbl">Correo electrónico</div>
+                <div class="ct-val">contacto@sive.org</div>
+              </div>
+            </div>
+            <div class="ct-item">
+              <div class="ct-ico"><i class="fa-brands fa-instagram"></i></div>
+              <div>
+                <div class="ct-lbl">Instagram</div>
+                <div class="ct-val">@corporacion_sive</div>
+              </div>
+            </div>
+            <div class="ct-item">
+              <div class="ct-ico"><i class="fa-brands fa-whatsapp"></i></div>
+              <div>
+                <div class="ct-lbl">Comunidad WhatsApp</div>
+                <div class="ct-val">Brigadas de salud y formación</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="ig-wrap">
+          <div class="ig-top">
+            <i class="fa-brands fa-instagram ig-icon"></i>
+            <h3>Síguenos en Instagram</h3>
+            <p>Brigadas de salud, formación y voluntariado estudiantil en nuestra comunidad digital.</p>
+            <a class="btn-ig" href="https://www.instagram.com/corporacion_sive" target="_blank" rel="noopener">
+              <i class="fa-brands fa-instagram"></i> Seguir @corporacion_sive
+            </a>
+          </div>
+          <div class="ig-bottom">
+            <div class="ig-stats">
+              <div class="ig-stat">
+                <div class="ig-stat-num">6</div>
+                <div class="ig-stat-lbl">Publicaciones</div>
+              </div>
+              <div class="ig-stat-sep"></div>
+              <div class="ig-stat">
+                <div class="ig-stat-num">79</div>
+                <div class="ig-stat-lbl">Seguidores</div>
+              </div>
+              <div class="ig-stat-sep"></div>
+              <div class="ig-stat">
+                <div class="ig-stat-num">5</div>
+                <div class="ig-stat-lbl">Seguidos</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════ -->
+  <footer class="footer">
+    <div class="ctn">
+      <div class="footer-top">
+
+        <div class="ft-brand">
+          <div class="ft-row">
+            <img src="logo_sive.jpeg" alt="SIVE">
+            <span class="ft-bn">SIVE</span>
+          </div>
+          <div class="ft-bs">Salud Integral Vocacional Estudiantil</div>
+          <p>Corporación dedicada a transformar la salud y el bienestar de la comunidad estudiantil vocacional.</p>
+        </div>
+
+        <div class="ft-col">
+          <h4>Corporación</h4>
+          <ul>
+            <li><button onclick="goTo('inicio')"><i class="fa-solid fa-house"></i> Inicio</button></li>
+            <li><button onclick="goTo('nosotros')"><i class="fa-solid fa-users"></i> Nosotros</button></li>
+            <li><button onclick="goTo('servicios')"><i class="fa-solid fa-stethoscope"></i> Servicios</button></li>
+            <li><button onclick="goTo('fundadores')"><i class="fa-solid fa-star"></i> Fundadores</button></li>
+          </ul>
+        </div>
+
+        <div class="ft-col">
+          <h4>Conectar</h4>
+          <ul>
+            <li><button onclick="goTo('blog')"><i class="fa-solid fa-newspaper"></i> Blog de Salud</button></li>
+            <li><button onclick="goTo('contacto')"><i class="fa-solid fa-envelope"></i> Contacto</button></li>
+            <li><button onclick="openAdmin()"><i class="fa-solid fa-lock"></i> Admin Blog</button></li>
+          </ul>
+        </div>
+
+      </div>
+      <div class="footer-bottom">
+        <span class="footer-copy">© 2025 SIVE — Corporación Salud Integral Vocacional Estudiantil. Todos los derechos reservados.</span>
+        <a class="footer-ig" href="https://www.instagram.com/corporacion_sive" target="_blank" rel="noopener">
+          <i class="fa-brands fa-instagram"></i> @corporacion_sive
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ══════════════════════════════════════
+       CONTENEDORES DINÁMICOS (los llena app.js)
+  ══════════════════════════════════════ -->
+  <div id="admin-container"></div>
+  <div id="modal-container"></div>
+
+  <!-- Script al final del body -->
+  <script src="app.js"></script>
+
+</body>
+</html>
