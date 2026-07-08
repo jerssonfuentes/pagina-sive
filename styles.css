@@ -471,7 +471,12 @@ img   { max-width: 100%; display: block; }
 /* ══════════════════════════════════════════
    FUNDADORES
 ══════════════════════════════════════════ */
-.fnd-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.8rem; }
+/* ── Tarjetas de fundadores ── */
+.fnd-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+}
 .fnd-card {
   background: #fff;
   border: 1px solid var(--border);
@@ -479,33 +484,40 @@ img   { max-width: 100%; display: block; }
   overflow: hidden;
   text-align: center;
   box-shadow: var(--sh);
-  transition: all .28s;
+  transition: all .3s;
 }
-.fnd-card:hover { box-shadow: var(--sh-xl); transform: translateY(-5px); }
-.fnd-av-wrap {
+.fnd-card:hover { box-shadow: var(--sh-xl); transform: translateY(-6px); }
+
+/* Contenedor de la foto — altura generosa para que se vea completa */
+.fnd-img-wrap {
   width: 100%;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 3.8rem;
-  font-weight: 900;
-  color: #fff;
-  letter-spacing: 2px;
+  height: 300px;          /* más alto = más foto visible */
+  overflow: hidden;
+  position: relative;
 }
-.fnd-body { padding: 1.75rem 1.4rem 2rem; }
-.fnd-name { font-size: .97rem; font-weight: 900; color: var(--navy); margin-bottom: .3rem; line-height: 1.35; }
-.fnd-role { font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--teal); margin-bottom: 1rem; }
-.fnd-hr   { width: 30px; height: 2px; background: var(--border); border-radius: 1px; margin: 0 auto 1rem; }
-.fnd-tag  {
+.fnd-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 10%;  /* centra ligeramente hacia arriba para mostrar cara */
+  display: block;
+  transition: transform .4s ease;
+}
+.fnd-card:hover .fnd-img-wrap img { transform: scale(1.04); }
+
+.fnd-body  { padding: 1.75rem 1.6rem 2.1rem; }
+.fnd-name  { font-size: 1.02rem; font-weight: 900; color: var(--navy); margin-bottom: .35rem; line-height: 1.35; }
+.fnd-role  { font-size: .74rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; color: var(--teal); margin-bottom: 1.1rem; }
+.fnd-hr    { width: 32px; height: 2px; background: var(--border); border-radius: 1px; margin: 0 auto 1.1rem; }
+.fnd-tag   {
   display: inline-flex;
   align-items: center;
-  gap: .3rem;
+  gap: .35rem;
   background: var(--navy-lt);
   color: var(--navy);
-  padding: .28rem .85rem;
+  padding: .32rem .95rem;
   border-radius: 20px;
-  font-size: .72rem;
+  font-size: .74rem;
   font-weight: 700;
 }
 
