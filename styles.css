@@ -482,7 +482,7 @@ img   { max-width: 100%; display: block; }
   border: 1px solid var(--border);
   border-radius: var(--rl);
   overflow: hidden;
-  text-align: center;
+  text-align: top;
   box-shadow: var(--sh);
   transition: all .3s;
 }
