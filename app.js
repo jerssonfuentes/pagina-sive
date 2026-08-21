@@ -14,6 +14,9 @@ const ADMIN_PASS = 'Sive2025*';
 /* ── Clave de almacenamiento ── */
 const STORAGE_KEY = 'sive_blog_v2';
 
+/* Pega aquí la URL /exec entregada al desplegar Google Apps Script. */
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnQHKPv_qQgXDTO7WF5dk9iV-clKxPC-9wY8X3kksqQ-MIFD76PZ3MdnK2v5mINZwGcg/exec';
+
 /* ── Estado del panel admin ── */
 let adminLoggedIn = false;
 let adminView     = 'list';   /* 'list' | 'create' */
@@ -38,6 +41,67 @@ function esc(s) {
 function goTo(id) {
   var el = document.getElementById(id);
   if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+/* ── Formulario de voluntariado ── */
+async function submitVolunteerForm(event) {
+  event.preventDefault();
+
+  var form = event.currentTarget;
+  var status = document.getElementById('volunteer-status');
+  var dateLabel = document.getElementById('acceptance-date');
+  var submitButton = form.querySelector('[type="submit"]');
+
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  if (!GOOGLE_SCRIPT_URL) {
+    status.className = 'vf-status error';
+    status.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> La recepción en Google Drive todavía no está activada. Configura la URL de Google Apps Script antes de publicar el formulario.';
+    status.focus();
+    return;
+  }
+
+  var acceptanceDate = new Date().toLocaleDateString('es-CO', {
+    year: 'numeric', month: 'long', day: 'numeric'
+  });
+
+  var formData = new FormData(form);
+  var payload = {};
+  formData.forEach(function(value, key) { payload[key] = String(value).trim(); });
+
+  ['compromiso', 'bioseguridad', 'conducto_regular', 'comunicacion_responsable', 'datos', 'imagen']
+    .forEach(function(name) {
+      payload[name] = Boolean(form.elements[name] && form.elements[name].checked);
+    });
+
+  submitButton.disabled = true;
+  submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando en Drive...';
+  status.className = 'vf-status sending';
+  status.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Estamos generando y guardando tu PDF. No cierres esta página.';
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload)
+    });
+
+    dateLabel.textContent = acceptanceDate;
+    status.className = 'vf-status success';
+    status.innerHTML = '<i class="fa-solid fa-circle-check"></i> Inscripción recibida. El PDF fue enviado para guardarse en el archivo institucional de SIVE el ' + esc(acceptanceDate) + '.';
+    form.reset();
+  } catch (error) {
+    status.className = 'vf-status error';
+    status.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> No fue posible enviar la inscripción. Revisa tu conexión e inténtalo nuevamente.';
+  } finally {
+    submitButton.disabled = false;
+    submitButton.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Completar inscripción';
+    status.focus();
+  }
 }
 
 /* ════════════════════════════════════════════

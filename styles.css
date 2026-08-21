@@ -467,6 +467,132 @@ img   { max-width: 100%; display: block; }
 .cta-btns { position: relative; display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
 
 /* ══════════════════════════════════════════
+   FORMULARIO DE VOLUNTARIADO
+══════════════════════════════════════════ */
+.volunteer-sec { background: linear-gradient(180deg, #f4f7fb 0%, #fff 100%); }
+.volunteer-layout {
+  display: grid;
+  grid-template-columns: minmax(250px, .7fr) minmax(0, 1.55fr);
+  gap: 3rem;
+  align-items: start;
+}
+.volunteer-intro { position: sticky; top: 110px; }
+.volunteer-intro .sec-desc { max-width: 430px; }
+.volunteer-benefits { display: grid; gap: .7rem; margin: 1.8rem 0; }
+.volunteer-benefits div {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  color: var(--navy);
+  font-size: .88rem;
+  font-weight: 800;
+}
+.volunteer-benefits i {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: var(--teal-lt);
+  color: var(--teal);
+  display: grid;
+  place-items: center;
+}
+.volunteer-note {
+  display: flex;
+  gap: .8rem;
+  padding: 1rem;
+  border-radius: var(--r);
+  background: var(--navy-lt);
+  border: 1px solid var(--border);
+}
+.volunteer-note i { color: var(--blue); margin-top: .18rem; }
+.volunteer-note p { color: var(--muted); font-size: .78rem; line-height: 1.65; font-weight: 600; }
+.volunteer-form {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--rl);
+  padding: 2rem;
+  box-shadow: var(--sh-lg);
+}
+.vf-honeypot { position: absolute !important; left: -10000px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; }
+.vf-section { border: 0; min-width: 0; padding: 0 0 1.8rem; margin: 0 0 1.8rem; border-bottom: 1px solid var(--border); }
+.vf-section legend {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  width: 100%;
+  margin-bottom: 1.2rem;
+  color: var(--navy);
+  font-size: 1rem;
+  font-weight: 900;
+}
+.vf-section legend span {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: var(--navy);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: .78rem;
+}
+.vf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.vf-field { display: grid; gap: .42rem; color: var(--navy); font-size: .78rem; font-weight: 800; }
+.vf-field.vf-full { grid-column: 1 / -1; }
+.vf-field input,
+.vf-field select {
+  width: 100%;
+  min-height: 46px;
+  padding: .75rem .9rem;
+  border: 1.5px solid var(--border);
+  border-radius: 11px;
+  background: #fbfdff;
+  color: var(--navy-dark);
+  font: 600 .88rem 'Nunito', sans-serif;
+  outline: none;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+.vf-field input:focus,
+.vf-field select:focus { border-color: var(--teal); background: #fff; box-shadow: 0 0 0 4px rgba(77,138,124,.12); }
+.vf-consents { display: grid; gap: .8rem; }
+.vf-check {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  gap: .75rem;
+  align-items: start;
+  padding: .95rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: #fbfdff;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.vf-check:hover { border-color: var(--teal); background: var(--teal-lt); }
+.vf-check input { width: 19px; height: 19px; margin-top: .1rem; accent-color: var(--teal); cursor: pointer; }
+.vf-check span { color: var(--muted); font-size: .78rem; line-height: 1.6; font-weight: 600; }
+.vf-policy { margin-top: .25rem; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; background: #fff; }
+.vf-policy summary {
+  padding: .95rem 1rem;
+  color: var(--navy);
+  background: var(--navy-lt);
+  font-size: .8rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+.vf-policy-body { padding: 1rem 1.15rem 1.15rem; color: var(--muted); font-size: .77rem; line-height: 1.7; }
+.vf-policy-body h4 { color: var(--navy); font-size: .82rem; margin: .25rem 0 .35rem; }
+.vf-policy-body ol { padding-left: 1.2rem; margin: 0 0 .7rem; }
+.vf-policy-body p + h4 { margin-top: 1rem; }
+.vf-submit-row { display: flex; align-items: center; justify-content: space-between; gap: 1.2rem; }
+.vf-submit-row p { color: var(--muted); font-size: .76rem; font-weight: 600; }
+.vf-submit-row i { color: var(--teal); }
+.vf-submit { border: 0; cursor: pointer; font-family: 'Nunito', sans-serif; white-space: nowrap; }
+.vf-submit:disabled { opacity: .7; cursor: wait; transform: none; }
+.vf-status { display: none; margin-top: 1rem; padding: 1rem; border-radius: 11px; font-size: .84rem; font-weight: 700; line-height: 1.6; }
+.vf-status.success { display: block; color: #246457; background: var(--teal-lt); border: 1px solid #badfd5; }
+.vf-status.sending { display: block; color: var(--navy); background: var(--navy-lt); border: 1px solid var(--border); }
+.vf-status.error { display: block; color: #8b2e2e; background: #fff1f1; border: 1px solid #efc1c1; }
+
+/* ══════════════════════════════════════════
    FUNDADORES
 ══════════════════════════════════════════ */
 /* ── Tarjetas de fundadores ── */
@@ -1146,6 +1272,8 @@ img   { max-width: 100%; display: block; }
   .strip  { grid-template-columns: repeat(2, 1fr); }
   .nav-links { display: none; }
   .admin-panel { max-width: 100%; }
+  .volunteer-layout { grid-template-columns: 1fr; }
+  .volunteer-intro { position: static; }
 }
 @media (max-width: 600px) {
   .srv-grid, .fnd-grid, .blg-grid { grid-template-columns: 1fr; }
@@ -1155,4 +1283,9 @@ img   { max-width: 100%; display: block; }
   .strip, .footer, .cta-banner { padding-left: 1.2rem; padding-right: 1.2rem; }
   .hero h1 { font-size: 2.1rem; }
   .gallery-grid { grid-template-columns: 1fr 1fr; grid-template-rows: 160px 160px; }
+  .volunteer-form { padding: 1.25rem; }
+  .vf-grid { grid-template-columns: 1fr; }
+  .vf-field.vf-full { grid-column: auto; }
+  .vf-submit-row { align-items: stretch; flex-direction: column; }
+  .vf-submit { justify-content: center; width: 100%; }
 }
