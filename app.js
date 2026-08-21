@@ -24,8 +24,42 @@ let newPostImage  = '';       /* base64 de la imagen seleccionada */
 let loginError    = '';
 let selectedPost  = null;     /* post abierto en modal */
 
+/* ── Publicaciones destacadas tomadas del Instagram oficial de SIVE ── */
+const FEATURED_POSTS = [
+  {
+    id: -1,
+    featured: true,
+    title: 'Servir también transforma a quien ayuda',
+    content: 'La vocación de servicio nos invita a detenernos, escuchar y reconocer a cada persona detrás de una historia. En SIVE creemos que los actos sencillos, cuando nacen de la empatía y el compromiso, pueden dejar una huella profunda en la comunidad.\n\nEl voluntariado no solo brinda acompañamiento y bienestar: también transforma a quienes ofrecen su tiempo y sus conocimientos. Cada sonrisa confirma que construir comunidad comienza con estar presentes.',
+    image: 'alianza-mission-brain-udes.jpg',
+    author: 'Equipo SIVE',
+    date: '18 de julio de 2026',
+    sourceUrl: 'https://www.instagram.com/corporacion_sive/p/Da8bu4fEbKl/'
+  },
+  {
+    id: -2,
+    featured: true,
+    title: 'Jornada de salud en Fundación Vikingos',
+    content: 'SIVE desarrolló una jornada de salud en la Fundación Vikingos centrada en la prevención, la atención cercana y el acompañamiento a la comunidad. Profesionales y estudiantes compartieron conocimientos y promovieron hábitos de cuidado desde una perspectiva humana y solidaria.\n\nLa actividad reafirmó la importancia de construir una salud más accesible mediante alianzas que acercan orientación y bienestar a quienes más lo necesitan.',
+    image: 'blog-fundacion-vikingos.jpg',
+    author: 'Equipo SIVE',
+    date: '22 de junio de 2026',
+    sourceUrl: 'https://www.instagram.com/corporacion_sive/reel/DZ5PU_qRWQG/'
+  },
+  {
+    id: -3,
+    featured: true,
+    title: 'Sonrisas y esperanza con Fundación Niños de Paz',
+    content: 'Junto a la Fundación Niños de Paz vivimos una jornada social marcada por la alegría, la empatía y el servicio. El equipo voluntario entregó tiempo, conocimientos y acompañamiento para crear una experiencia significativa con los niños y sus familias.\n\nEstos encuentros fortalecen nuestro propósito de contribuir a comunidades con más oportunidades, bienestar y esperanza.',
+    image: 'alianza-escuela-misiones.jpg',
+    author: 'Equipo SIVE',
+    date: '18 de julio de 2026',
+    sourceUrl: 'https://www.instagram.com/corporacion_sive/reel/Da8XNJwRN6C/'
+  }
+];
+
 /* ── Posts del blog ── */
-let posts = [];
+let posts = FEATURED_POSTS.slice();
 
 /* ════════════════════════════════════════════
    UTILIDADES
@@ -110,17 +144,19 @@ async function submitVolunteerForm(event) {
 function loadPosts() {
   try {
     var raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) posts = JSON.parse(raw);
+    var savedPosts = raw ? JSON.parse(raw) : [];
+    posts = savedPosts.concat(FEATURED_POSTS);
   } catch (e) {
-    posts = [];
+    posts = FEATURED_POSTS.slice();
   }
   renderBlogPosts();
 }
 
 function savePosts(arr) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-    posts = arr;
+    var customPosts = arr.filter(function(post) { return !post.featured; });
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(customPosts));
+    posts = customPosts.concat(FEATURED_POSTS);
     renderBlogPosts();
   } catch (e) {
     alert('Error al guardar. La imagen puede ser mayor a 1 MB. Por favor usa una imagen más pequeña.');
@@ -155,7 +191,7 @@ function renderBlogPosts() {
       '<div class="blg-card" onclick="openPostModal(' + p.id + ')">' +
         imgHtml +
         '<div class="blg-body">' +
-          '<span class="blg-cat"><i class="fa-solid fa-heart-pulse"></i> Salud SIVE</span>' +
+          '<span class="blg-cat"><i class="fa-solid fa-heart-pulse"></i> ' + (p.featured ? 'Historias SIVE' : 'Salud SIVE') + '</span>' +
           '<div class="blg-ttl">' + esc(p.title) + '</div>' +
           '<div class="blg-exc">' + esc(p.content) + '</div>' +
           '<div class="blg-meta">' +
@@ -311,6 +347,10 @@ function renderModal() {
     ? '<img class="mdl-img" src="' + selectedPost.image + '" alt="' + esc(selectedPost.title) + '">'
     : '';
 
+  var sourceHtml = selectedPost.sourceUrl
+    ? '<a class="mdl-source" href="' + selectedPost.sourceUrl + '" target="_blank" rel="noopener"><i class="fa-brands fa-instagram"></i> Ver publicación original en Instagram</a>'
+    : '';
+
   container.innerHTML =
     '<div class="mdl-bg" onclick="closeModal()">' +
       '<div class="mdl-box" onclick="event.stopPropagation()">' +
@@ -320,6 +360,7 @@ function renderModal() {
           '<span class="mdl-cat"><i class="fa-solid fa-heart-pulse"></i> Salud SIVE</span>' +
           '<h2 class="mdl-ttl">' + esc(selectedPost.title) + '</h2>' +
           '<div class="mdl-txt">' + esc(selectedPost.content) + '</div>' +
+          sourceHtml +
           '<div class="mdl-au"><i class="fa-solid fa-user-pen"></i> Por ' + esc(selectedPost.author) + ' · ' + esc(selectedPost.date) + '</div>' +
         '</div>' +
       '</div>' +

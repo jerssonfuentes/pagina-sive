@@ -422,6 +422,12 @@ img   { max-width: 100%; display: block; }
   display: block;
 }
 .srv-card:hover .srv-img-wrap img { transform: scale(1.06); }
+.srv-img-medicina       { object-position: center 45% !important; }
+.srv-img-psicologia     { object-position: center 38% !important; }
+.srv-img-odontologia    { object-position: center 34% !important; }
+.srv-img-optometria     { object-position: center 48% !important; }
+.srv-img-fisioterapia   { object-position: center 48% !important; }
+.srv-img-fonoaudiologia { object-position: center 42% !important; }
 .srv-body { padding: 1.4rem; }
 .srv-ico-wrap {
   width: 44px; height: 44px;
@@ -1244,6 +1250,20 @@ img   { max-width: 100%; display: block; }
 }
 .mdl-ttl { font-size: 1.5rem; font-weight: 900; color: var(--navy); margin-bottom: .9rem; }
 .mdl-txt { color: #4a5568; line-height: 1.92; font-size: .92rem; white-space: pre-wrap; font-weight: 500; }
+.mdl-source {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  margin-top: 1.2rem;
+  padding: .72rem 1rem;
+  border-radius: 30px;
+  background: linear-gradient(135deg, #7336b8, #d52d59, #ee8a2d);
+  color: #fff;
+  text-decoration: none;
+  font-size: .8rem;
+  font-weight: 800;
+}
+.mdl-source:hover { filter: brightness(1.06); }
 .mdl-au  {
   margin-top: 1.4rem;
   padding-top: 1rem;
