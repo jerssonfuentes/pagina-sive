@@ -523,11 +523,11 @@ img   { max-width: 100%; display: block; }
 /* Inscripción a brigadas */
 .brigade-registration { background: linear-gradient(180deg, #f6f9fd 0%, #fff 100%); }
 .brigade-wrap { max-width: 1050px; }
-.brigade-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 2rem 0; }
+.brigade-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 1rem; margin: 2rem 0; }
 .brigade-loading, .brigade-empty { grid-column: 1 / -1; padding: 1.5rem; text-align: center; color: #5a7090; background: #fff; border: 1px dashed #b9cbe0; border-radius: 14px; }
-.brigade-option { position: relative; display: block; cursor: pointer; }
+.brigade-option { position: relative; display: block; min-width: 0; cursor: pointer; }
 .brigade-option input { position: absolute; opacity: 0; pointer-events: none; }
-.brigade-card { height: 100%; padding: 1.25rem; background: #fff; border: 2px solid #d4e1f0; border-radius: 16px; box-shadow: 0 8px 22px rgba(30,58,110,.07); transition: .2s ease; }
+.brigade-card { display: block; box-sizing: border-box; width: 100%; min-height: 210px; height: 100%; padding: 1.25rem; background: #fff; border: 2px solid #d4e1f0; border-radius: 16px; box-shadow: 0 8px 22px rgba(30,58,110,.07); transition: .2s ease; }
 .brigade-option:hover .brigade-card { transform: translateY(-3px); border-color: #88adca; }
 .brigade-option input:checked + .brigade-card { border-color: #4d8a7c; box-shadow: 0 0 0 4px rgba(77,138,124,.14), 0 10px 25px rgba(30,58,110,.1); }
 .brigade-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: .75rem; }
@@ -544,6 +544,10 @@ img   { max-width: 100%; display: block; }
 .selected-brigade { margin-bottom: 1.4rem; padding: 1rem 1.1rem; background: #edf7f4; border-left: 4px solid #4d8a7c; border-radius: 10px; color: #263a59; }
 .selected-brigade strong { color: #1e3a6e; }
 .brigade-submit { width: 100%; justify-content: center; margin-top: 1.25rem; }
+
+@media (max-width: 900px) {
+  .brigade-options { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
 
 @media (max-width: 640px) {
   .brigade-options { grid-template-columns: 1fr; }
