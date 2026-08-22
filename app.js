@@ -148,18 +148,56 @@ function formatBrigadeDate(value) {
   return date.toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
 }
 
-function loadBrigades() {
+async function requestBrigades(attempt) {
+  var controller = new AbortController();
+  var timeoutId = setTimeout(function() { controller.abort(); }, 12000);
+  try {
+    var separator = GOOGLE_SCRIPT_URL.indexOf('?') === -1 ? '?' : '&';
+    var response = await fetch(GOOGLE_SCRIPT_URL + separator + 'action=brigades&t=' + Date.now() + '&attempt=' + attempt, {
+      method: 'GET',
+      mode: 'cors',
+      cache: 'no-store',
+      signal: controller.signal
+    });
+    if (!response.ok) throw new Error('Respuesta HTTP ' + response.status);
+    return await response.json();
+  } finally {
+    clearTimeout(timeoutId);
+  }
+}
+
+async function loadBrigades() {
   var container = document.getElementById('brigade-options');
   if (!container || !GOOGLE_SCRIPT_URL) return;
 
-  var callbackName = 'receiveSiveBrigades';
-  var script = document.createElement('script');
-  script.src = GOOGLE_SCRIPT_URL + '?action=brigades&callback=' + callbackName + '&t=' + Date.now();
-  script.async = true;
-  script.onerror = function() {
-    container.innerHTML = '<div class="brigade-empty"><i class="fa-solid fa-circle-exclamation"></i> No fue posible consultar la programación. Inténtalo nuevamente más tarde.</div>';
-  };
-  document.head.appendChild(script);
+  var slowMessage = setTimeout(function() {
+    container.innerHTML = '<div class="brigade-loading"><i class="fa-solid fa-spinner fa-spin"></i> Google Drive está tardando un poco. Seguimos consultando la programación...</div>';
+  }, 4000);
+
+  try {
+    var response;
+    try {
+      response = await requestBrigades(1);
+    } catch (firstError) {
+      await new Promise(function(resolve) { setTimeout(resolve, 600); });
+      response = await requestBrigades(2);
+    }
+    clearTimeout(slowMessage);
+    if (response && response.ok && Array.isArray(response.brigades) && response.brigades.length) {
+      try { localStorage.setItem('sive_brigades_cache', JSON.stringify(response)); } catch (cacheError) {}
+    }
+    window.receiveSiveBrigades(response);
+  } catch (error) {
+    clearTimeout(slowMessage);
+    var cached = null;
+    try { cached = JSON.parse(localStorage.getItem('sive_brigades_cache') || 'null'); } catch (cacheError) {}
+    if (cached && Array.isArray(cached.brigades) && cached.brigades.length) {
+      window.receiveSiveBrigades(cached);
+      container.insertAdjacentHTML('beforeend', '<div class="brigade-cache-note"><i class="fa-solid fa-clock-rotate-left"></i> Programación mostrada desde la última consulta disponible.</div>');
+    } else {
+      container.innerHTML = '<div class="brigade-empty"><i class="fa-solid fa-circle-exclamation"></i> No fue posible consultar la programación. Recarga la página o inténtalo nuevamente en unos minutos.</div>';
+    }
+  }
 }
 
 window.receiveSiveBrigades = function(response) {

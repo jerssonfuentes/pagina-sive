@@ -525,6 +525,7 @@ img   { max-width: 100%; display: block; }
 .brigade-wrap { max-width: 1050px; }
 .brigade-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 1rem; margin: 2rem 0; }
 .brigade-loading, .brigade-empty { grid-column: 1 / -1; padding: 1.5rem; text-align: center; color: #5a7090; background: #fff; border: 1px dashed #b9cbe0; border-radius: 14px; }
+.brigade-cache-note { grid-column: 1 / -1; color: #805b00; font-size: .82rem; text-align: center; }
 .brigade-option { position: relative; display: block; min-width: 0; cursor: pointer; }
 .brigade-option input { position: absolute; opacity: 0; pointer-events: none; }
 .brigade-card { display: block; box-sizing: border-box; width: 100%; min-height: 210px; height: 100%; padding: 1.25rem; background: #fff; border: 2px solid #d4e1f0; border-radius: 16px; box-shadow: 0 8px 22px rgba(30,58,110,.07); transition: .2s ease; }
