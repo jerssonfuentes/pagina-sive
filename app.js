@@ -77,6 +77,38 @@ function goTo(id) {
   if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
 
+function showSuccessAlert(title, message) {
+  var previous = document.getElementById('sive-success-alert');
+  if (previous) previous.remove();
+
+  var overlay = document.createElement('div');
+  overlay.id = 'sive-success-alert';
+  overlay.className = 'sive-alert-overlay';
+  overlay.innerHTML =
+    '<div class="sive-alert-card" role="alertdialog" aria-modal="true" aria-labelledby="sive-alert-title" aria-describedby="sive-alert-message">' +
+      '<div class="sive-alert-icon"><i class="fa-solid fa-check"></i></div>' +
+      '<p class="sive-alert-eyebrow">SIVE · Confirmación</p>' +
+      '<h2 id="sive-alert-title">' + esc(title) + '</h2>' +
+      '<p id="sive-alert-message">' + esc(message) + '</p>' +
+      '<button type="button" class="btn-primary sive-alert-button"><i class="fa-solid fa-heart"></i> Entendido</button>' +
+    '</div>';
+
+  function closeAlert() {
+    overlay.classList.add('is-closing');
+    setTimeout(function() { overlay.remove(); }, 180);
+  }
+
+  overlay.querySelector('.sive-alert-button').addEventListener('click', closeAlert);
+  overlay.addEventListener('click', function(event) {
+    if (event.target === overlay) closeAlert();
+  });
+  overlay.addEventListener('keydown', function(event) {
+    if (event.key === 'Escape') closeAlert();
+  });
+  document.body.appendChild(overlay);
+  overlay.querySelector('.sive-alert-button').focus();
+}
+
 /* ── Formulario de voluntariado ── */
 async function submitVolunteerForm(event) {
   event.preventDefault();
@@ -269,7 +301,10 @@ async function submitBrigadeForm(event) {
     }
     status.className = 'vf-status success';
     status.innerHTML = '<i class="fa-solid fa-circle-check"></i> Inscripción exitosa. La autorización en PDF se guardó correctamente en Google Drive.';
-    alert('¡Inscripción exitosa!');
+    showSuccessAlert(
+      '¡Inscripción exitosa!',
+      'Tu autorización fue generada y guardada correctamente. Gracias por participar en esta brigada con SIVE.'
+    );
     form.reset();
     document.getElementById('brigade-id').value = '';
     document.getElementById('selected-brigade').hidden = true;

@@ -526,6 +526,18 @@ img   { max-width: 100%; display: block; }
 .brigade-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; gap: 1rem; margin: 2rem 0; }
 .brigade-loading, .brigade-empty { grid-column: 1 / -1; padding: 1.5rem; text-align: center; color: #5a7090; background: #fff; border: 1px dashed #b9cbe0; border-radius: 14px; }
 .brigade-cache-note { grid-column: 1 / -1; color: #805b00; font-size: .82rem; text-align: center; }
+.sive-alert-overlay { position: fixed; inset: 0; z-index: 5000; display: grid; place-items: center; padding: 1.25rem; background: rgba(18, 39, 75, .64); backdrop-filter: blur(7px); animation: siveAlertFade .22s ease both; }
+.sive-alert-overlay.is-closing { animation: siveAlertFade .18s ease reverse both; }
+.sive-alert-card { position: relative; width: min(440px, 100%); padding: 2.2rem 2rem 1.8rem; overflow: hidden; text-align: center; background: #fff; border: 1px solid rgba(77,138,124,.28); border-radius: 24px; box-shadow: 0 25px 70px rgba(14,37,74,.28); animation: siveAlertPop .32s cubic-bezier(.2,.8,.2,1) both; }
+.sive-alert-card::before { content: ''; position: absolute; inset: 0 0 auto; height: 6px; background: linear-gradient(90deg, #1e3a6e, #4d8a7c, #9dd8d0); }
+.sive-alert-icon { display: grid; place-items: center; width: 76px; height: 76px; margin: 0 auto 1rem; color: #fff; background: linear-gradient(145deg, #4d8a7c, #2f7668); border: 8px solid #e3f4ef; border-radius: 50%; box-shadow: 0 10px 25px rgba(77,138,124,.25); font-size: 1.65rem; }
+.sive-alert-eyebrow { margin: 0 0 .45rem; color: #4d8a7c; font-size: .72rem; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
+.sive-alert-card h2 { margin: 0; color: #1e3a6e; font-size: clamp(1.45rem, 4vw, 1.9rem); }
+.sive-alert-card > p:not(.sive-alert-eyebrow) { margin: .8rem auto 1.45rem; max-width: 350px; color: #5a7090; font-size: .93rem; line-height: 1.65; }
+.sive-alert-button { width: 100%; justify-content: center; }
+@keyframes siveAlertFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes siveAlertPop { from { opacity: 0; transform: translateY(18px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@media (prefers-reduced-motion: reduce) { .sive-alert-overlay, .sive-alert-card { animation: none; } }
 .brigade-option { position: relative; display: block; min-width: 0; cursor: pointer; }
 .brigade-option input { position: absolute; opacity: 0; pointer-events: none; }
 .brigade-card { display: block; box-sizing: border-box; width: 100%; min-height: 210px; height: 100%; padding: 1.25rem; background: #fff; border: 2px solid #d4e1f0; border-radius: 16px; box-shadow: 0 8px 22px rgba(30,58,110,.07); transition: .2s ease; }
