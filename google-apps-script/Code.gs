@@ -4,6 +4,7 @@
  */
 
 const DRIVE_FOLDER_ID = '1UrG5wYGoLIDVsbY1hZHmUEPbOK5BqQS_';
+const BRIGADE_DRIVE_FOLDER_ID = '1_Gj5a4f8KvLTLtwaGJ5vcUarKUJlcuCc';
 const TIME_ZONE = 'America/Bogota';
 const SPREADSHEET_ID = '1OiIgXuyz4fSpJuzkx3-B5iy-2s69dza3';
 const BRIGADES_SHEET_NAME = 'Brigadas';
@@ -11,9 +12,11 @@ const BRIGADES_SHEET_NAME = 'Brigadas';
 // Ejecute esta función una sola vez desde el editor para autorizar Drive y Google Sheets.
 function authorizeSiveSetup() {
   const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+  const brigadeFolder = DriveApp.getFolderById(BRIGADE_DRIVE_FOLDER_ID);
   const sheet = SpreadsheetApp.openById(SPREADSHEET_ID).getSheetByName(BRIGADES_SHEET_NAME);
   if (!sheet) throw new Error('No existe una pestaña llamada "' + BRIGADES_SHEET_NAME + '".');
-  console.log('Autorización correcta. Carpeta: ' + folder.getName() + '; hoja: ' + sheet.getName());
+  console.log('Autorización correcta. Voluntarios: ' + folder.getName() +
+    '; brigadas: ' + brigadeFolder.getName() + '; hoja: ' + sheet.getName());
 }
 
 function doGet(e) {
@@ -151,11 +154,14 @@ function createBrigadePdf_(data, submissionId, now) {
   const brigade = findBrigadeById_(data.brigade_id);
   if (!brigade) throw new Error('La brigada seleccionada ya no está disponible.');
 
-  const folder = DriveApp.getFolderById(DRIVE_FOLDER_ID);
+  const folder = DriveApp.getFolderById(BRIGADE_DRIVE_FOLDER_ID);
   const safeName = clean_(data.nombre, 100).normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  const safeBrigadeName = clean_(brigade.nombre, 120).normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '').replace(/[^a-zA-Z0-9]+/g, '_').replace(/^_+|_+$/g, '');
   const dateStamp = Utilities.formatDate(now, TIME_ZONE, 'yyyy-MM-dd');
-  const fileName = 'SIVE_Autorizacion_Brigada_' + (safeName || 'Sin_nombre') + '_' + dateStamp + '.pdf';
+  const fileName = 'SIVE_Autorizacion_' + (safeBrigadeName || 'Brigada') + '_' +
+    (safeName || 'Sin_nombre') + '_' + dateStamp + '.pdf';
 
   const doc = DocumentApp.create('TEMP_' + submissionId);
   const body = doc.getBody();
