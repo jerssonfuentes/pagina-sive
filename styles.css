@@ -697,6 +697,26 @@ img   { max-width: 100%; display: block; }
   font-weight: 700;
 }
 
+/* ── Líderes voluntarios ── */
+.leader-section { background: linear-gradient(180deg, #f5f9fc 0%, #edf6f3 100%); }
+.leader-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; }
+.leader-card { border-color: rgba(77,138,124,.22); }
+.leader-photo-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+  color: #4d8a7c;
+  background:
+    linear-gradient(135deg, rgba(77,138,124,.08), rgba(30,58,110,.08)),
+    repeating-linear-gradient(45deg, transparent, transparent 14px, rgba(77,138,124,.05) 14px, rgba(77,138,124,.05) 28px);
+  border-bottom: 1px dashed rgba(77,138,124,.35);
+}
+.leader-photo-placeholder i { font-size: 2.4rem; }
+.leader-photo-placeholder span { font-size: .75rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.leader-card:hover .leader-photo-placeholder { color: #1e3a6e; }
+
 /* ══════════════════════════════════════════
    GALERÍA
 ══════════════════════════════════════════ */
