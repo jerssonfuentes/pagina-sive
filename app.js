@@ -259,11 +259,17 @@ async function submitBrigadeForm(event) {
   status.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Guardando la autorización en el archivo institucional de SIVE.';
 
   try {
-    await fetch(GOOGLE_SCRIPT_URL, {
-      method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload)
+    var response = await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST', mode: 'cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload)
     });
+    if (!response.ok) throw new Error('Respuesta HTTP ' + response.status);
+    var result = await response.json();
+    if (!result || result.ok !== true) {
+      throw new Error(result && result.error ? result.error : 'Apps Script no confirmó la inscripción.');
+    }
     status.className = 'vf-status success';
-    status.innerHTML = '<i class="fa-solid fa-circle-check"></i> Inscripción enviada. La autorización en PDF fue remitida para guardarse en Google Drive.';
+    status.innerHTML = '<i class="fa-solid fa-circle-check"></i> Inscripción exitosa. La autorización en PDF se guardó correctamente en Google Drive.';
+    alert('¡Inscripción exitosa!');
     form.reset();
     document.getElementById('brigade-id').value = '';
     document.getElementById('selected-brigade').hidden = true;
@@ -271,7 +277,7 @@ async function submitBrigadeForm(event) {
     document.querySelectorAll('input[name="brigade_choice"]').forEach(function(input) { input.checked = false; });
   } catch (error) {
     status.className = 'vf-status error';
-    status.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> No fue posible enviar la autorización. Revisa tu conexión e inténtalo nuevamente.';
+    status.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> No fue posible completar la inscripción. Revisa los datos e inténtalo nuevamente.';
   } finally {
     submitButton.disabled = false;
     submitButton.innerHTML = '<i class="fa-solid fa-file-circle-check"></i> Autorizar e inscribirme';
