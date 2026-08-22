@@ -519,6 +519,35 @@ img   { max-width: 100%; display: block; }
   padding: 2rem;
   box-shadow: var(--sh-lg);
 }
+
+/* Inscripción a brigadas */
+.brigade-registration { background: linear-gradient(180deg, #f6f9fd 0%, #fff 100%); }
+.brigade-wrap { max-width: 1050px; }
+.brigade-options { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin: 2rem 0; }
+.brigade-loading, .brigade-empty { grid-column: 1 / -1; padding: 1.5rem; text-align: center; color: #5a7090; background: #fff; border: 1px dashed #b9cbe0; border-radius: 14px; }
+.brigade-option { position: relative; display: block; cursor: pointer; }
+.brigade-option input { position: absolute; opacity: 0; pointer-events: none; }
+.brigade-card { height: 100%; padding: 1.25rem; background: #fff; border: 2px solid #d4e1f0; border-radius: 16px; box-shadow: 0 8px 22px rgba(30,58,110,.07); transition: .2s ease; }
+.brigade-option:hover .brigade-card { transform: translateY(-3px); border-color: #88adca; }
+.brigade-option input:checked + .brigade-card { border-color: #4d8a7c; box-shadow: 0 0 0 4px rgba(77,138,124,.14), 0 10px 25px rgba(30,58,110,.1); }
+.brigade-card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: .75rem; }
+.brigade-card h3 { margin: 0; color: #1e3a6e; font-size: 1.05rem; line-height: 1.35; }
+.brigade-radio-mark { flex: 0 0 22px; height: 22px; border: 2px solid #9db3ca; border-radius: 50%; position: relative; }
+.brigade-option input:checked + .brigade-card .brigade-radio-mark { border-color: #4d8a7c; }
+.brigade-option input:checked + .brigade-card .brigade-radio-mark::after { content: ''; position: absolute; inset: 4px; background: #4d8a7c; border-radius: 50%; }
+.brigade-meta { display: grid; gap: .55rem; margin-top: 1rem; color: #526987; font-size: .9rem; }
+.brigade-meta span { display: flex; gap: .55rem; align-items: flex-start; }
+.brigade-meta i { width: 16px; margin-top: 2px; color: #4d8a7c; }
+.brigade-capacity { display: inline-flex; width: fit-content; margin-top: .85rem; padding: .3rem .65rem; color: #246457; background: #ddf4ea; border-radius: 999px; font-size: .8rem; font-weight: 700; }
+.brigade-form { display: none; margin-top: 1.5rem; }
+.brigade-form.is-ready { display: block; }
+.selected-brigade { margin-bottom: 1.4rem; padding: 1rem 1.1rem; background: #edf7f4; border-left: 4px solid #4d8a7c; border-radius: 10px; color: #263a59; }
+.selected-brigade strong { color: #1e3a6e; }
+.brigade-submit { width: 100%; justify-content: center; margin-top: 1.25rem; }
+
+@media (max-width: 640px) {
+  .brigade-options { grid-template-columns: 1fr; }
+}
 .vf-honeypot { position: absolute !important; left: -10000px !important; width: 1px !important; height: 1px !important; overflow: hidden !important; }
 .vf-section { border: 0; min-width: 0; padding: 0 0 1.8rem; margin: 0 0 1.8rem; border-bottom: 1px solid var(--border); }
 .vf-section legend {

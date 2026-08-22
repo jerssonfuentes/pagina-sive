@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <link rel="stylesheet" href="styles.css?v=20260821">
+  <link rel="stylesheet" href="styles.css?v=20260821b">
 </head>
 <body>
 
@@ -526,6 +526,64 @@
   </section>
 
   <!-- ══════════════════════════════════════
+       INSCRIPCIÓN A BRIGADAS
+  ══════════════════════════════════════ -->
+  <section id="inscripcion-brigadas" class="sec sw brigade-registration">
+    <div class="ctn brigade-wrap">
+      <div class="sec-hd">
+        <p class="eyebrow"><i class="fa-solid fa-hand-holding-medical"></i> Participa con SIVE</p>
+        <h2 class="sec-title">Inscripción a brigadas</h2>
+        <p class="sec-desc">Selecciona una brigada disponible y completa la autorización de participación.</p>
+      </div>
+
+      <div id="brigade-options" class="brigade-options" aria-live="polite">
+        <div class="brigade-loading"><i class="fa-solid fa-spinner fa-spin"></i> Consultando brigadas disponibles...</div>
+      </div>
+
+      <form id="brigade-form" class="volunteer-form brigade-form" onsubmit="submitBrigadeForm(event)">
+        <input type="hidden" name="type" value="brigade">
+        <input type="hidden" name="brigade_id" id="brigade-id" required>
+        <input type="text" name="website" class="vf-honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <div id="selected-brigade" class="selected-brigade" hidden></div>
+
+        <div class="vf-section">
+          <div class="vf-section-title"><span>1</span> Datos del participante</div>
+          <div class="vf-grid">
+            <label class="vf-field vf-wide"><span>Nombre completo *</span><input name="nombre" required maxlength="150" autocomplete="name"></label>
+            <label class="vf-field"><span>Profesión, carrera u oficio *</span><input name="profesion" required maxlength="150"></label>
+            <label class="vf-field"><span>Tipo de documento *</span>
+              <select name="tipo_documento" required>
+                <option value="">Selecciona</option><option>Cédula de ciudadanía</option><option>Tarjeta de identidad</option><option>Cédula de extranjería</option><option>Pasaporte</option>
+              </select>
+            </label>
+            <label class="vf-field"><span>Número de documento *</span><input name="documento" required maxlength="60" inputmode="numeric"></label>
+            <label class="vf-field"><span>Teléfono *</span><input name="telefono" required maxlength="60" inputmode="tel" autocomplete="tel"></label>
+            <label class="vf-field vf-wide"><span>Correo electrónico *</span><input name="correo" type="email" required maxlength="180" autocomplete="email"></label>
+          </div>
+        </div>
+
+        <div class="vf-section">
+          <div class="vf-section-title"><span>2</span> Autorización de participación</div>
+          <div class="vf-consents">
+            <label class="vf-check"><input type="checkbox" name="participacion" required><span><strong>Participación voluntaria.</strong> Declaro que participo libremente en la brigada seleccionada y que la información suministrada es veraz.</span></label>
+            <label class="vf-check"><input type="checkbox" name="protocolos" required><span><strong>Funciones y protocolos.</strong> Declaro haber sido informado de las actividades, funciones y responsabilidades, y acepto cumplir las normas, protocolos de bioseguridad y lineamientos impartidos por SIVE.</span></label>
+            <label class="vf-check"><input type="checkbox" name="sin_relacion_laboral" required><span><strong>Naturaleza voluntaria.</strong> Comprendo que esta participación no genera relación laboral o contractual ni da lugar a remuneración.</span></label>
+            <label class="vf-check"><input type="checkbox" name="datos_brigada" required><span><strong>Tratamiento de datos personales.</strong> Autorizo a SIVE a tratar mis datos para gestionar esta actividad, conforme a la Ley 1581 de 2012 y sus normas reglamentarias.</span></label>
+          </div>
+        </div>
+
+        <div class="vf-acceptance">
+          <i class="fa-solid fa-shield-halved"></i>
+          <p>Las casillas obligatorias dejan constancia electrónica de tu aceptación y reemplazan el espacio de firma manuscrita en esta inscripción digital.</p>
+        </div>
+        <button class="btn-primary brigade-submit" type="submit"><i class="fa-solid fa-file-circle-check"></i> Autorizar e inscribirme</button>
+        <div id="brigade-status" class="vf-status" tabindex="-1" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ══════════════════════════════════════
        BLOG (posts los llena app.js)
   ══════════════════════════════════════ -->
   <section id="blog" class="sec sw">
@@ -672,7 +730,7 @@
   <div id="modal-container"></div>
 
   <!-- Script al final del body -->
-  <script src="app.js?v=20260821"></script>
+  <script src="app.js?v=20260821b"></script>
 
 </body>
 </html>

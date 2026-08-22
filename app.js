@@ -138,6 +138,109 @@ async function submitVolunteerForm(event) {
   }
 }
 
+/* ── Programación e inscripción a brigadas ── */
+let availableBrigades = [];
+
+function formatBrigadeDate(value) {
+  if (!value) return 'Fecha por confirmar';
+  var date = new Date(String(value).length === 10 ? value + 'T12:00:00' : value);
+  if (Number.isNaN(date.getTime())) return String(value);
+  return date.toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
+}
+
+function loadBrigades() {
+  var container = document.getElementById('brigade-options');
+  if (!container || !GOOGLE_SCRIPT_URL) return;
+
+  var callbackName = 'receiveSiveBrigades';
+  var script = document.createElement('script');
+  script.src = GOOGLE_SCRIPT_URL + '?action=brigades&callback=' + callbackName + '&t=' + Date.now();
+  script.async = true;
+  script.onerror = function() {
+    container.innerHTML = '<div class="brigade-empty"><i class="fa-solid fa-circle-exclamation"></i> No fue posible consultar la programación. Inténtalo nuevamente más tarde.</div>';
+  };
+  document.head.appendChild(script);
+}
+
+window.receiveSiveBrigades = function(response) {
+  var container = document.getElementById('brigade-options');
+  availableBrigades = response && response.ok && Array.isArray(response.brigades) ? response.brigades : [];
+
+  if (!availableBrigades.length) {
+    var message = response && response.message ? response.message : 'En este momento no hay brigadas abiertas para inscripción.';
+    container.innerHTML = '<div class="brigade-empty"><i class="fa-solid fa-calendar-xmark"></i> ' + esc(message) + '</div>';
+    return;
+  }
+
+  container.innerHTML = availableBrigades.map(function(brigade) {
+    return '<label class="brigade-option">' +
+      '<input type="radio" name="brigade_choice" value="' + esc(brigade.id) + '" onchange="selectBrigade(this.value)">' +
+      '<span class="brigade-card"><span class="brigade-card-top"><h3>' + esc(brigade.nombre) + '</h3><span class="brigade-radio-mark"></span></span>' +
+      '<span class="brigade-meta"><span><i class="fa-regular fa-calendar"></i>' + esc(formatBrigadeDate(brigade.fecha)) + '</span>' +
+      '<span><i class="fa-solid fa-location-dot"></i>' + esc(brigade.lugar) + '</span>' +
+      '<span><i class="fa-regular fa-clock"></i>' + esc(brigade.horario || 'Horario por confirmar') + '</span></span>' +
+      (brigade.cupos ? '<span class="brigade-capacity">' + esc(brigade.cupos) + ' cupos</span>' : '') + '</span></label>';
+  }).join('');
+};
+
+function selectBrigade(id) {
+  var brigade = availableBrigades.find(function(item) { return String(item.id) === String(id); });
+  var form = document.getElementById('brigade-form');
+  if (!brigade || !form) return;
+
+  document.getElementById('brigade-id').value = brigade.id;
+  var summary = document.getElementById('selected-brigade');
+  summary.hidden = false;
+  summary.innerHTML = '<strong>Brigada seleccionada:</strong> ' + esc(brigade.nombre) + ' · ' +
+    esc(formatBrigadeDate(brigade.fecha)) + ' · ' + esc(brigade.lugar);
+  form.classList.add('is-ready');
+  form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function submitBrigadeForm(event) {
+  event.preventDefault();
+  var form = event.currentTarget;
+  var status = document.getElementById('brigade-status');
+  var submitButton = form.querySelector('[type="submit"]');
+
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  var formData = new FormData(form);
+  var payload = {};
+  formData.forEach(function(value, key) { payload[key] = String(value).trim(); });
+  ['participacion', 'protocolos', 'sin_relacion_laboral', 'datos_brigada'].forEach(function(name) {
+    payload[name] = Boolean(form.elements[name] && form.elements[name].checked);
+  });
+
+  submitButton.disabled = true;
+  submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando autorización...';
+  status.className = 'vf-status sending';
+  status.innerHTML = '<i class="fa-solid fa-cloud-arrow-up"></i> Guardando la autorización en el archivo institucional de SIVE.';
+
+  try {
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload)
+    });
+    status.className = 'vf-status success';
+    status.innerHTML = '<i class="fa-solid fa-circle-check"></i> Inscripción enviada. La autorización en PDF fue remitida para guardarse en Google Drive.';
+    form.reset();
+    document.getElementById('brigade-id').value = '';
+    document.getElementById('selected-brigade').hidden = true;
+    form.classList.remove('is-ready');
+    document.querySelectorAll('input[name="brigade_choice"]').forEach(function(input) { input.checked = false; });
+  } catch (error) {
+    status.className = 'vf-status error';
+    status.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> No fue posible enviar la autorización. Revisa tu conexión e inténtalo nuevamente.';
+  } finally {
+    submitButton.disabled = false;
+    submitButton.innerHTML = '<i class="fa-solid fa-file-circle-check"></i> Autorizar e inscribirme';
+    status.focus();
+  }
+}
+
 /* ════════════════════════════════════════════
    ALMACENAMIENTO (localStorage — funciona offline)
 ════════════════════════════════════════════ */
@@ -490,4 +593,5 @@ document.addEventListener('keydown', function(e) {
 ════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded', function() {
   loadPosts();
+  loadBrigades();
 });
