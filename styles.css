@@ -653,6 +653,7 @@ img   { max-width: 100%; display: block; }
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
+.founder-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .fnd-card {
   background: #fff;
   border: 1px solid var(--border);
