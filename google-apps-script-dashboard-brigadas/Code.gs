@@ -209,6 +209,7 @@ function writePeople_(sheet, catalog, records) {
   const options = [ALL_BRIGADES_OPTION].concat(catalog.map(function (brigade) { return brigade.name; }));
   const selected = options.indexOf(currentSelection) !== -1 ? currentSelection : ALL_BRIGADES_OPTION;
 
+  sheet.getRange(1, 1, 3, Math.max(sheet.getLastColumn(), 6)).clearDataValidations();
   sheet.getRange('A1').setValue('Selecciona una brigada:').setFontWeight('bold').setFontColor('#1E3A6E');
   sheet.getRange('B1').setValue(selected).setDataValidation(
     SpreadsheetApp.newDataValidation().requireValueInList(options, true).setAllowInvalid(false).build()
@@ -246,7 +247,11 @@ function renderParticipantsFromCache_(dashboard, selected) {
 }
 
 function renderParticipantRows_(sheet, records, selected) {
-  clearData_(sheet, Math.max(sheet.getLastColumn(), 6), 4);
+  const oldRows = Math.max(sheet.getLastRow() - 3, 0);
+  if (oldRows) {
+    sheet.getRange(4, 1, oldRows, Math.max(sheet.getLastColumn(), 6))
+      .clearContent().clearDataValidations();
+  }
   const filtered = selected === ALL_BRIGADES_OPTION ? records : records.filter(function (item) {
     return item.brigade === selected;
   });
