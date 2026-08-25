@@ -12,8 +12,8 @@ const MAX_NEW_PDFS_PER_RUN = 10;
 
 const SUMMARY_SHEET = 'Resumen_Brigadas';
 const PEOPLE_SHEET = 'Participantes';
-const FILES_SHEET = 'Archivos_Carpeta';
 const CACHE_SHEET = 'Datos_Procesamiento';
+const ALL_BRIGADES_OPTION = 'Todas las brigadas';
 
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('SIVE Brigadas')
@@ -23,23 +23,23 @@ function onOpen() {
 }
 
 function onEdit(e) {
-  if (!e || !e.range || e.range.getRow() < 2) return;
+  if (!e || !e.range) return;
   const sheet = e.range.getSheet();
-  const name = sheet.getName();
-  if (name !== PEOPLE_SHEET && name !== FILES_SHEET) return;
+  if (sheet.getName() !== PEOPLE_SHEET) return;
 
-  const attendanceColumn = name === PEOPLE_SHEET ? 6 : 8;
-  if (e.range.getColumn() !== attendanceColumn) return;
+  if (e.range.getA1Notation() === 'B1') {
+    renderParticipantsFromCache_(e.source, clean_(e.value) || ALL_BRIGADES_OPTION);
+    return;
+  }
+
+  if (e.range.getRow() < 4 || e.range.getColumn() !== 6) return;
   const attendance = clean_(e.value) === 'Sí' ? 'Sí' : 'No';
-  const fileName = name === PEOPLE_SHEET ? clean_(sheet.getRange(e.range.getRow(), 4).getValue())
-    : clean_(sheet.getRange(e.range.getRow(), 3).getValue());
-  const otherSheet = e.source.getSheetByName(name === PEOPLE_SHEET ? FILES_SHEET : PEOPLE_SHEET);
-  const otherFileColumn = name === PEOPLE_SHEET ? 3 : 4;
-  const otherAttendanceColumn = name === PEOPLE_SHEET ? 8 : 6;
-  if (!fileName || otherSheet.getLastRow() < 2) return;
-  const match = otherSheet.getRange(2, otherFileColumn, otherSheet.getLastRow() - 1, 1)
+  const fileName = clean_(sheet.getRange(e.range.getRow(), 4).getValue());
+  const cache = e.source.getSheetByName(CACHE_SHEET);
+  if (!fileName || !cache || cache.getLastRow() < 2) return;
+  const match = cache.getRange(2, 2, cache.getLastRow() - 1, 1)
     .createTextFinder(fileName).matchEntireCell(true).findNext();
-  if (match) otherSheet.getRange(match.getRow(), otherAttendanceColumn).setValue(attendance);
+  if (match) cache.getRange(match.getRow(), 11).setValue(attendance);
 }
 
 // Ejecutar una sola vez desde la Hoja de Google independiente.
@@ -62,7 +62,7 @@ function syncDashboard() {
     const dashboard = SpreadsheetApp.openById(dashboardId);
     ensureSheets_(dashboard);
     const catalog = readBrigadeCatalog_();
-    const attendance = readAttendance_(dashboard);
+    const attendance = readAttendance_(dashboard.getSheetByName(PEOPLE_SHEET));
     const indexedFiles = readExistingFiles_(dashboard.getSheetByName(CACHE_SHEET));
     Object.keys(attendance).forEach(function (fileName) {
       Object.keys(indexedFiles).forEach(function (fileId) {
@@ -71,9 +71,8 @@ function syncDashboard() {
     });
     const fileRecords = scanFolder_(catalog, indexedFiles);
 
-    writeFiles_(dashboard.getSheetByName(FILES_SHEET), fileRecords);
-    writePeople_(dashboard.getSheetByName(PEOPLE_SHEET), fileRecords);
     writeCache_(dashboard.getSheetByName(CACHE_SHEET), fileRecords);
+    writePeople_(dashboard.getSheetByName(PEOPLE_SHEET), catalog, fileRecords);
     writeSummary_(dashboard.getSheetByName(SUMMARY_SHEET), catalog, fileRecords);
   } finally {
     lock.releaseLock();
@@ -181,62 +180,84 @@ function inferFromFileName_(fileName, catalog) {
 
 function readExistingFiles_(sheet) {
   if (sheet.getLastRow() < 2) return {};
-  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 7).getValues();
+  const rows = sheet.getRange(2, 1, sheet.getLastRow() - 1, 11).getValues();
   const index = {};
   rows.forEach(function (row) {
     const fileId = clean_(row[0]);
     if (fileId) index[fileId] = {
-      participant: clean_(row[1]), profession: clean_(row[2]), document: clean_(row[3]),
-      status: clean_(row[4]), attendance: clean_(row[5]), fileName: clean_(row[6])
+      fileName: clean_(row[1]), participant: clean_(row[5]), profession: clean_(row[6]),
+      document: clean_(row[7]), status: clean_(row[9]), attendance: clean_(row[10])
     };
   });
   return index;
 }
 
-function readAttendance_(dashboard) {
+function readAttendance_(sheet) {
   const attendance = {};
-  [
-    { sheet: dashboard.getSheetByName(PEOPLE_SHEET), fileColumn: 4, attendanceColumn: 6 },
-    { sheet: dashboard.getSheetByName(FILES_SHEET), fileColumn: 3, attendanceColumn: 8 }
-  ].forEach(function (config) {
-    if (!config.sheet || config.sheet.getLastRow() < 2) return;
-    const rows = config.sheet.getRange(2, 1, config.sheet.getLastRow() - 1,
-      Math.max(config.fileColumn, config.attendanceColumn)).getValues();
-    rows.forEach(function (row) {
-      const fileName = clean_(row[config.fileColumn - 1]);
-      const value = clean_(row[config.attendanceColumn - 1]);
-      if (fileName && (value === 'Sí' || value === 'No')) attendance[fileName] = value;
-    });
+  if (!sheet || sheet.getLastRow() < 4) return attendance;
+  const rows = sheet.getRange(4, 1, sheet.getLastRow() - 3, 6).getValues();
+  rows.forEach(function (row) {
+    const fileName = clean_(row[3]);
+    const value = clean_(row[5]);
+    if (fileName && (value === 'Sí' || value === 'No')) attendance[fileName] = value;
   });
   return attendance;
 }
 
-function writeFiles_(sheet, records) {
-  clearData_(sheet, Math.max(sheet.getLastColumn(), 8));
-  if (!records.length) return;
-  sheet.getRange(2, 1, records.length, 8).setValues(records.map(function (item) {
-    return [item.updated, item.fileId, item.fileName, item.brigadeId, item.brigade, item.participant,
-      item.url, item.attendance];
-  }));
-  sheet.getRange(2, 1, records.length, 1).setNumberFormat('yyyy-mm-dd hh:mm');
-  applyAttendanceValidation_(sheet.getRange(2, 8, records.length, 1));
-}
+function writePeople_(sheet, catalog, records) {
+  const currentSelection = clean_(sheet.getRange('B1').getValue());
+  const options = [ALL_BRIGADES_OPTION].concat(catalog.map(function (brigade) { return brigade.name; }));
+  const selected = options.indexOf(currentSelection) !== -1 ? currentSelection : ALL_BRIGADES_OPTION;
 
-function writePeople_(sheet, records) {
-  clearData_(sheet, Math.max(sheet.getLastColumn(), 6));
-  if (!records.length) return;
-  sheet.getRange(2, 1, records.length, 6).setValues(records.map(function (item) {
-    return [item.brigadeId, item.brigade, item.participant, item.fileName, item.url, item.attendance];
-  }));
-  applyAttendanceValidation_(sheet.getRange(2, 6, records.length, 1));
+  sheet.getRange('A1').setValue('Selecciona una brigada:').setFontWeight('bold').setFontColor('#1E3A6E');
+  sheet.getRange('B1').setValue(selected).setDataValidation(
+    SpreadsheetApp.newDataValidation().requireValueInList(options, true).setAllowInvalid(false).build()
+  ).setBackground('#EDF6F3').setFontColor('#246457').setFontWeight('bold');
+  sheet.getRange(3, 1, 1, 6).setValues([[
+    'ID brigada', 'Brigada', 'Participante', 'Archivo PDF', 'Enlace', 'Asistencia'
+  ]]);
+  styleHeader_(sheet.getRange(3, 1, 1, 6), '#4D8A7C');
+  sheet.setFrozenRows(3);
+  renderParticipantRows_(sheet, records, selected);
 }
 
 function writeCache_(sheet, records) {
-  clearData_(sheet, 7);
+  clearData_(sheet, 11);
   if (!records.length) return;
-  sheet.getRange(2, 1, records.length, 7).setValues(records.map(function (item) {
-    return [item.fileId, item.participant, item.profession, item.document, item.status, item.attendance, item.fileName];
+  sheet.getRange(2, 1, records.length, 11).setValues(records.map(function (item) {
+    return [item.fileId, item.fileName, item.updated, item.brigadeId, item.brigade, item.participant,
+      item.profession, item.document, item.url, item.status, item.attendance];
   }));
+}
+
+function renderParticipantsFromCache_(dashboard, selected) {
+  const cache = dashboard.getSheetByName(CACHE_SHEET);
+  const sheet = dashboard.getSheetByName(PEOPLE_SHEET);
+  if (!cache || !sheet) return;
+  const records = cache.getLastRow() < 2 ? [] : cache.getRange(2, 1, cache.getLastRow() - 1, 11).getValues()
+    .map(function (row) {
+      return {
+        fileId: clean_(row[0]), fileName: clean_(row[1]), updated: row[2], brigadeId: clean_(row[3]),
+        brigade: clean_(row[4]), participant: clean_(row[5]), profession: clean_(row[6]),
+        document: clean_(row[7]), url: clean_(row[8]), status: clean_(row[9]), attendance: clean_(row[10])
+      };
+    });
+  renderParticipantRows_(sheet, records, selected);
+}
+
+function renderParticipantRows_(sheet, records, selected) {
+  clearData_(sheet, Math.max(sheet.getLastColumn(), 6), 4);
+  const filtered = selected === ALL_BRIGADES_OPTION ? records : records.filter(function (item) {
+    return item.brigade === selected;
+  });
+  if (!filtered.length) {
+    sheet.getRange('A4').setValue('No hay participantes registrados para esta selección.').setFontColor('#5A7090');
+    return;
+  }
+  sheet.getRange(4, 1, filtered.length, 6).setValues(filtered.map(function (item) {
+    return [item.brigadeId, item.brigade, item.participant, item.fileName, item.url, item.attendance];
+  }));
+  applyAttendanceValidation_(sheet.getRange(4, 6, filtered.length, 1));
 }
 
 function applyAttendanceValidation_(range) {
@@ -263,16 +284,27 @@ function writeSummary_(sheet, catalog, records) {
 }
 
 function ensureSheets_(spreadsheet) {
-  ensureTableSheet_(spreadsheet, FILES_SHEET, [
-    'Última modificación', 'ID archivo', 'Nombre del archivo', 'ID brigada', 'Brigada',
-    'Participante', 'Enlace al PDF', 'Asistencia'
-  ], '#5A7090');
-  ensureTableSheet_(spreadsheet, PEOPLE_SHEET, [
-    'ID brigada', 'Brigada', 'Participante', 'Archivo PDF', 'Enlace', 'Asistencia'
-  ], '#4D8A7C');
+  const obsoleteFilesSheet = spreadsheet.getSheetByName('Archivos_Carpeta');
+  if (obsoleteFilesSheet) spreadsheet.deleteSheet(obsoleteFilesSheet);
+
+  let people = spreadsheet.getSheetByName(PEOPLE_SHEET);
+  if (!people) people = spreadsheet.insertSheet(PEOPLE_SHEET);
+  people.setColumnWidth(1, 120);
+  people.setColumnWidth(2, 290);
+  people.setColumnWidth(3, 240);
+  people.setColumnWidth(4, 380);
+  people.setColumnWidth(5, 180);
+  people.setColumnWidth(6, 120);
+
+  const existingCache = spreadsheet.getSheetByName(CACHE_SHEET);
+  const cacheNeedsMigration = existingCache && existingCache.getLastColumn() < 11;
   const cache = ensureTableSheet_(spreadsheet, CACHE_SHEET, [
-    'ID archivo', 'Participante', 'Profesión', 'Documento', 'Estado', 'Asistencia', 'Nombre archivo'
+    'ID archivo', 'Nombre archivo', 'Modificado', 'ID brigada', 'Brigada', 'Participante',
+    'Profesión', 'Documento', 'Enlace', 'Estado', 'Asistencia'
   ], '#1E3A6E');
+  if (cacheNeedsMigration && cache.getLastRow() > 1) {
+    cache.getRange(2, 1, cache.getLastRow() - 1, cache.getMaxColumns()).clearContent();
+  }
   if (!cache.isSheetHidden()) cache.hideSheet();
 
   let summary = spreadsheet.getSheetByName(SUMMARY_SHEET);

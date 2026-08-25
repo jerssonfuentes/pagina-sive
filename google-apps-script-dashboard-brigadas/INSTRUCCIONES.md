@@ -10,7 +10,7 @@ Este tablero no modifica la hoja de programación ni el formulario web.
 6. Seleccione `setupIndependentDashboard` y pulse **Ejecutar**.
 7. Autorice el acceso a Drive, Documentos y Hojas de cálculo.
 
-El proyecto creará `Resumen_Brigadas`, `Participantes` y `Archivos_Carpeta` en la hoja nueva.
+El proyecto creará `Resumen_Brigadas` y `Participantes` en la hoja nueva.
 Los cambios del catálogo se reflejan al editarlo y la carpeta se revisa cada cinco minutos.
 
-Las pestañas `Participantes` y `Archivos_Carpeta` incluyen la columna `Asistencia`, con un selector de valores `Sí` y `No`. La selección se conserva durante las sincronizaciones.
+En `Participantes`, la celda `B1` permite seleccionar una brigada o verlas todas. La columna `Asistencia` incluye un selector con `Sí` y `No`, y la selección se conserva durante las sincronizaciones.
