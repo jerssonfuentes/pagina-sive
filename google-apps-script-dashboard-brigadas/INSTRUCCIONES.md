@@ -12,3 +12,5 @@ Este tablero no modifica la hoja de programación ni el formulario web.
 
 El proyecto creará `Resumen_Brigadas`, `Participantes` y `Archivos_Carpeta` en la hoja nueva.
 Los cambios del catálogo se reflejan al editarlo y la carpeta se revisa cada cinco minutos.
+
+Las pestañas `Participantes` y `Archivos_Carpeta` incluyen la columna `Asistencia`, con un selector de valores `Sí` y `No`. La selección se conserva durante las sincronizaciones.
