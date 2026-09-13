@@ -112,6 +112,20 @@ img   { max-width: 100%; display: block; }
   transition: all .18s;
 }
 .nav-links button:hover { background: var(--navy-lt); }
+.nav-professionals {
+  color: var(--teal);
+  font-size: .82rem;
+  font-weight: 800;
+  text-decoration: none;
+  border: 1px solid #a8d4c9;
+  border-radius: 30px;
+  padding: .43rem .8rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  transition: all .18s;
+}
+.nav-professionals:hover { background: var(--teal-lt); border-color: var(--teal); }
 .nav-cta {
   background: var(--navy) !important;
   color: #fff !important;
