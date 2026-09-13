@@ -20,3 +20,14 @@
   align-items: center;
   gap: 5px;
 }
+
+.auth-screen {
+  background-image: linear-gradient(135deg, rgba(19, 78, 74, .94), rgba(15, 118, 110, .72)), url('../birigadaj.jpeg');
+  background-size: cover;
+  background-position: center;
+}
+
+.auth-card {
+  border: 1px solid rgba(255, 255, 255, .55);
+  box-shadow: 0 24px 70px rgba(5, 49, 45, .32);
+}
