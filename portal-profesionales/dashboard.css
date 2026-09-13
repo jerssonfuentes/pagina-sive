@@ -1,0 +1,16 @@
+.clinical-dashboard { max-width: 1180px; margin: 0 auto; padding: 42px 20px 72px; }
+.dashboard-heading { display:flex; justify-content:space-between; gap:24px; align-items:end; margin-bottom:24px; }
+.dashboard-heading h1 { margin:0; font-size:clamp(30px,4vw,44px); color:var(--dark); }
+.dashboard-heading p { margin:8px 0 0; color:var(--muted); }
+.triage-card { display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:20px; padding:26px; border-radius:22px; background:linear-gradient(135deg,#134e4a,#0f766e); color:#fff; box-shadow:0 12px 30px #134e4a35; margin-bottom:28px; }
+.triage-icon,.area-icon { display:grid; place-items:center; width:54px; height:54px; border-radius:16px; font-size:25px; background:#ffffff24; }
+.triage-card h2 { margin:0 0 4px; font-size:24px; }.triage-card p { margin:0; color:#dff4ef; }
+.triage-card button { background:#fff; color:var(--dark); white-space:nowrap; }
+.areas-title { margin:0 0 14px; font-size:18px; color:var(--dark); }
+.areas-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; }
+.area-card { text-align:left; background:#fff; border:1px solid var(--line); border-radius:18px; padding:20px; transition:transform .18s,box-shadow .18s,border-color .18s; }
+.area-card:hover { transform:translateY(-3px); border-color:var(--teal); box-shadow:0 12px 26px #134e4a14; }
+.area-card .area-icon { background:var(--mint); margin-bottom:16px; }.area-card h3 { margin:0 0 5px; color:var(--dark); font-size:18px; }.area-card p { margin:0; color:var(--muted); font-size:13px; }.area-card small { display:block; margin-top:14px; color:var(--teal); font-weight:800; }
+.area-hero-back { border:0; background:transparent; color:var(--teal); font-weight:800; padding:0 0 8px; }
+.area-label { display:inline-block; margin-bottom:8px; padding:5px 10px; border-radius:99px; background:var(--mint); color:var(--dark); font-size:12px; font-weight:800; }
+@media(max-width:720px){.clinical-dashboard{padding:26px 14px 60px}.dashboard-heading{align-items:start;flex-direction:column}.triage-card{grid-template-columns:auto 1fr}.triage-card button{grid-column:1/-1;width:100%}.areas-grid{grid-template-columns:1fr}.area-card{padding:18px}}

@@ -4,7 +4,15 @@ import { onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail,
 import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 const ORGANIZATION_ID='sive';
-let currentUser=null, currentProfessional=null, recordsCache=[], pendingPersist=Promise.resolve();
+const AREAS=[
+  {key:'medicina',name:'Medicina',icon:'🩺',description:'Valoración médica general y seguimiento.'},
+  {key:'fonoaudiologia',name:'Fonoaudiología',icon:'🗣️',description:'Comunicación, lenguaje y deglución.'},
+  {key:'fisioterapia',name:'Fisioterapia',icon:'🏃',description:'Movimiento, rehabilitación y funcionalidad.'},
+  {key:'odontologia',name:'Odontología',icon:'🦷',description:'Salud oral y prevención odontológica.'},
+  {key:'optometria',name:'Optometría',icon:'👁️',description:'Tamizaje y cuidado de la salud visual.'},
+  {key:'psicologia',name:'Psicología',icon:'🧠',description:'Bienestar emocional y acompañamiento.'}
+];
+let currentUser=null, currentProfessional=null, recordsCache=[], pendingPersist=Promise.resolve(), activeArea='triaje';
 
 const commonSections=[
  {title:'Identificación del menor',description:'Datos básicos y del acudiente.',fields:[
@@ -50,9 +58,16 @@ function sectionsFor(cycle){const base=structuredClone(commonSections),cfg=speci
 function fieldHtml([name,label,type,required=false,options],value=''){const full=type==='textarea';const req=required?'required':'';let control;if(type==='select')control=`<select name="${name}" ${req}><option value="">Selecciona…</option>${options.map(o=>`<option ${value===o?'selected':''}>${escapeHtml(o)}</option>`).join('')}</select>`;else if(type==='textarea')control=`<textarea name="${name}" ${req}>${escapeHtml(value)}</textarea>`;else control=`<input name="${name}" type="${type}" value="${escapeHtml(value)}" ${req} ${type==='number'?'step="any" inputmode="decimal"':''}>`;return `<div class="field ${full?'full':''}"><label class="${required?'required':''}" for="${name}">${label}</label>${control}</div>`}
 function showToast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2600)}
 function go(path){location.hash=path}
-function renderList(){
-  const node=$('#listView').content.cloneNode(true),records=load().sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
+function areaInfo(key){return key==='triaje'?{key:'triaje',name:'Triage general',icon:'⚕️',description:'Registro inicial y priorización de la atención.'}:AREAS.find(area=>area.key===key)||AREAS[0]}
+function renderDashboard(){
+  activeArea='triaje';const counts=load().reduce((total,record)=>{const key=record.area||'triaje';total[key]=(total[key]||0)+1;return total},{});
+  $('#app').innerHTML=`<section class="clinical-dashboard"><div class="dashboard-heading"><div><p class="eyebrow">PORTAL CLÍNICO SIVE</p><h1>Áreas de atención</h1><p>Selecciona el área desde la cual registrar o consultar expedientes.</p></div></div><article class="triage-card"><div class="triage-icon">⚕️</div><div><h2>Triage general</h2><p>Registro inicial y priorización. Se maneja de forma independiente de las áreas clínicas.</p></div><button class="triage-open">Abrir triage <span>(${counts.triaje||0})</span></button></article><h2 class="areas-title">Áreas clínicas</h2><div class="areas-grid">${AREAS.map(area=>`<button class="area-card" data-area="${area.key}"><span class="area-icon">${area.icon}</span><h3>${area.name}</h3><p>${area.description}</p><small>Abrir área · ${counts[area.key]||0} registros</small></button>`).join('')}</div></section>`;
+  $('.triage-open').onclick=()=>go('#/area/triaje');document.querySelectorAll('.area-card').forEach(button=>button.onclick=()=>go(`#/area/${button.dataset.area}`));
+}
+function renderList(areaKey='triaje'){
+  activeArea=areaKey;const area=areaInfo(areaKey),node=$('#listView').content.cloneNode(true),records=load().filter(record=>(record.area||'triaje')===area.key).sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||''));
   $('#app').replaceChildren(node);$('#patientCount').textContent=records.length;
+  $('.hero').innerHTML=`<div><button class="area-hero-back" type="button">← Panel de áreas</button><p class="eyebrow">${area.key==='triaje'?'REGISTRO INICIAL':'ÁREA CLÍNICA'}</p><span class="area-label">${area.icon} ${area.name}</span><h1>${area.name}</h1><p>${area.description}</p></div><div class="stat"><strong id="patientCount">${records.length}</strong><span>registros en esta área</span></div>`;$('.area-hero-back').onclick=()=>go('#/dashboard');
   const list=$('#patientList'),empty=$('#emptyState'),canDelete=currentProfessional?.role==='admin';
   function draw(q=''){
     const filtered=records.filter(r=>`${r.name} ${r.civilRegistry}`.toLowerCase().includes(q.toLowerCase()));
@@ -60,27 +75,27 @@ function renderList(){
     empty.classList.toggle('hidden',records.length>0||q);if(!filtered.length&&q)list.innerHTML='<div class="empty"><h2>Sin resultados</h2><p>Prueba otro nombre o número de registro.</p></div>'
   }
   draw();$('#searchInput').addEventListener('input',e=>draw(e.target.value));document.querySelectorAll('.edit').forEach(b=>b.onclick=()=>go(`#/historia/${b.dataset.id}`));
-  document.querySelectorAll('.remove').forEach(b=>b.onclick=async()=>{if(confirm('¿Eliminar esta historia institucional? Esta acción no se puede deshacer.')){try{await deleteRecord(b.dataset.id);renderList();showToast('Historia eliminada')}catch(error){console.error(error);showToast('No tienes permiso para eliminar esta historia')}}});
+  document.querySelectorAll('.remove').forEach(b=>b.onclick=async()=>{if(confirm('¿Eliminar esta historia institucional? Esta acción no se puede deshacer.')){try{await deleteRecord(b.dataset.id);renderList(areaKey);showToast('Historia eliminada')}catch(error){console.error(error);showToast('No tienes permiso para eliminar esta historia')}}});
   $('.create-first')?.addEventListener('click',()=>go('#/categorias'));$('#exportBtn').onclick=()=>exportBackup(records);$('#importInput').onchange=importBackup
 }
-function renderCategories(){const node=$('#categoryView').content.cloneNode(true);$('#app').replaceChildren(node);$('#categoryBackBtn').onclick=()=>go('#/pacientes');document.querySelectorAll('.category-card').forEach(card=>card.onclick=()=>go(`#/nueva/${card.dataset.cycle}`))}
+function renderCategories(){const node=$('#categoryView').content.cloneNode(true),area=areaInfo(activeArea);$('#app').replaceChildren(node);$('.form-heading p').textContent=`${area.name} · Selecciona el ciclo vital`;$('#categoryBackBtn').onclick=()=>go(`#/area/${activeArea}`);document.querySelectorAll('.category-card').forEach(card=>card.onclick=()=>go(`#/nueva/${card.dataset.cycle}`))}
 function renderForm(id,requestedCycle){
   const existing=id?load().find(r=>r.id===id):null,node=$('#formView').content.cloneNode(true);$('#app').replaceChildren(node);$('#formTitle').textContent=existing?existing.name:'Nueva historia';
   const form=$('#clinicalForm');form.elements.id.value=existing?.id||'';const cycle=existing?.cycle||requestedCycle;if(!specific[cycle]){go('#/categorias');return}
   drawSections(cycle,existing||{});if(!existing&&form.elements.visitDate)form.elements.visitDate.value=new Date().toISOString().slice(0,10);setupWhoPanel(form);
   const birth=form.elements.birthDate,visit=form.elements.visitDate,refreshAssignment=()=>{if(!birth.value||!visit.value)return;const actual=cycleFor(birth.value,visit.value),stage=stageFor(birth.value,visit.value),age=ageFrom(birth.value,visit.value);if(stage&&actual===cycle){$('#cycleSubtitle').innerHTML=`<span class="cycle-banner">${stage.label} · ${stage.range} · Edad calculada: ${age.years} años, ${age.months%12} meses</span>`}else if(actual&&actual!==cycle)showToast(`La edad calculada corresponde a ${specific[actual].label}`);else if(!actual)showToast('La edad debe estar entre 1 mes y 17 años')};
-  birth.addEventListener('change',refreshAssignment);visit.addEventListener('change',refreshAssignment);refreshAssignment();$('#backBtn').onclick=$('#cancelBtn').onclick=()=>go(existing?'#/pacientes':'#/categorias');
+  birth.addEventListener('change',refreshAssignment);visit.addEventListener('change',refreshAssignment);refreshAssignment();$('#backBtn').onclick=$('#cancelBtn').onclick=()=>go(existing?`#/area/${existing.area||'triaje'}`:'#/categorias');
   form.onsubmit=async event=>{event.preventDefault();if(!form.reportValidity())return;const data=Object.fromEntries(new FormData(form));const actualCycle=cycleFor(data.birthDate,data.visitDate),age=ageFrom(data.birthDate,data.visitDate),stage=stageFor(data.birthDate,data.visitDate);if(!actualCycle||!age||!stage){showToast('Verifica las fechas de nacimiento y valoración');return}if(actualCycle!==cycle){showToast(`Esta edad pertenece a ${specific[actualCycle].label}`);return}
-    const records=load(),now=new Date().toISOString(),record={...data,id:data.id||uid(),cycle,ageMonths:age.months,lifeStage:stage.key,lifeStageLabel:stage.label,createdAt:existing?.createdAt||now,updatedAt:now,createdBy:existing?.createdBy||currentUser.uid};
+    const records=load(),now=new Date().toISOString(),record={...data,id:data.id||uid(),area:existing?.area||activeArea,cycle,ageMonths:age.months,lifeStage:stage.key,lifeStageLabel:stage.label,createdAt:existing?.createdAt||now,updatedAt:now,createdBy:existing?.createdBy||currentUser.uid};
     const index=records.findIndex(item=>item.id===record.id);if(index>=0)records[index]=record;else records.push(record);save(records);const submit=$('button[type="submit"]',form);if(submit){submit.disabled=true;submit.textContent='Guardando expediente…'}
-    try{await saveWordOnline();go('#/pacientes');showToast('Historia clínica guardada con éxito')}catch(error){console.error('No se pudo guardar la historia clínica',error);if(submit){submit.disabled=false;submit.textContent='Guardar historia'}showToast('No fue posible guardar el expediente. Verifica tu conexión e inténtalo nuevamente')}}
+    try{await saveWordOnline();go(`#/area/${activeArea}`);showToast('Historia clínica guardada con éxito')}catch(error){console.error('No se pudo guardar la historia clínica',error);if(submit){submit.disabled=false;submit.textContent='Guardar historia'}showToast('No fue posible guardar el expediente. Verifica tu conexión e inténtalo nuevamente')}}
 }
 function setupWhoPanel(form){const panel=$('#zscorePanel'),update=()=>panel.innerHTML=renderWhoResults(Object.fromEntries(new FormData(form)));form.addEventListener('input',update);form.addEventListener('change',update);setupMenstrualFields(form);update()}
 function setupMenstrualFields(form){const menarche=form.elements.menarche,fum=form.elements.lastMenstrualPeriod,sex=form.elements.sex;if(!menarche||!fum||!sex)return;const menarcheField=menarche.closest('.field'),fumField=fum.closest('.field');const update=()=>{const female=sex.value==='Femenino',hasMenarche=female&&menarche.value==='Sí';menarcheField.classList.toggle('hidden',!female);fumField.classList.toggle('hidden',!hasMenarche);fum.required=hasMenarche;if(!female){menarche.value='';fum.value=''}else if(!hasMenarche)fum.value=''};sex.addEventListener('change',update);menarche.addEventListener('change',update);update()}
 function drawSections(cycle,data){const cfg=specific[cycle],container=$('#formSections');$('#cycleSubtitle').innerHTML=`<span class="cycle-banner">${cfg.label} · ${cfg.range}</span>`;container.innerHTML=sectionsFor(cycle).map(s=>`<section class="form-card"><div class="section-title"><h2>${s.title}</h2><p>${s.description}</p></div><div class="fields">${s.fields.map(f=>fieldHtml(f,data[f[0]])).join('')}</div></section>`).join('');const form=$('#clinicalForm');form.elements.id.value=data.id||'';if(form.elements.weight&&form.elements.height&&form.elements.bmi){const calc=()=>{const w=Number(form.elements.weight.value),h=Number(form.elements.height.value)/100;if(w>0&&h>0)form.elements.bmi.value=(w/(h*h)).toFixed(2)};form.elements.weight.addEventListener('input',calc);form.elements.height.addEventListener('input',calc)}}
 function exportBackup(records){const blob=new Blob([JSON.stringify({app:'SIVE - Salud Integral Vocacional Estudiantil',version:1,exportedAt:new Date().toISOString(),records},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`sive-respaldo-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href);showToast('Respaldo exportado')}
 async function importBackup(e){const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(!Array.isArray(data.records))throw Error();if(confirm(`Se importarán ${data.records.length} historias y se reemplazarán las actuales. ¿Continuar?`)){save(data.records);renderList();showToast('Respaldo importado')}}catch{showToast('El archivo no es un respaldo válido')}e.target.value=''}
-function router(){const [,route,id]=location.hash.split('/');if(route==='categorias')renderCategories();else if(route==='nueva'&&id)renderForm(null,id);else if(route==='historia'&&id)renderForm(id);else renderList();$('#app').focus()}
+function router(){const [,route,id]=location.hash.split('/');if(route==='area'&&id)renderList(id);else if(route==='categorias')renderCategories();else if(route==='nueva'&&id)renderForm(null,id);else if(route==='historia'&&id)renderForm(id);else renderDashboard();$('#app').focus()}
 function setAuthStatus(message,kind=''){const status=$('#authStatus');status.textContent=message;status.className=`auth-status ${kind}`}
 function showLogin(message=''){ $('#clinicalPortal').classList.add('hidden');$('#authScreen').classList.remove('hidden');if(message)setAuthStatus(message,'error') }
 async function openClinicalPortal(user){
@@ -99,4 +114,4 @@ function startAuthentication(){
   $('#togglePassword').onclick=()=>{const field=$('#loginPassword'),button=$('#togglePassword'),showing=field.type==='text';field.type=showing?'password':'text';button.setAttribute('aria-pressed',String(!showing));button.setAttribute('aria-label',showing?'Mostrar contraseña':'Ocultar contraseña');button.querySelector('span').textContent=showing?'Mostrar':'Ocultar';button.querySelector('i').className=showing?'fa-solid fa-eye':'fa-solid fa-eye-slash'};
   $('#logoutBtn').onclick=()=>signOut(auth);onAuthStateChanged(auth,user=>{if(user)openClinicalPortal(user);else{currentUser=null;currentProfessional=null;recordsCache=[];showLogin()}});
 }
-$('#newBtn').onclick=()=>go('#/categorias');addEventListener('hashchange',()=>{if(currentUser)router()});$('#installBtn').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;$('#installBtn').classList.add('hidden')}};startAuthentication();
+$('#dashboardBtn').onclick=()=>go('#/dashboard');$('#newBtn').onclick=()=>go('#/categorias');addEventListener('hashchange',()=>{if(currentUser)router()});$('#installBtn').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;$('#installBtn').classList.add('hidden')}};startAuthentication();
