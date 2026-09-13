@@ -19,4 +19,59 @@
 .area-label { display:inline-block; margin-bottom:8px; padding:5px 10px; border-radius:99px; background:var(--mint); color:var(--dark); font-size:12px; font-weight:800; }
 .triage-form { margin-top:24px; }
 .triage-form .form-actions { grid-column:1 / -1; }
+
+/* Experiencia visual dentro del portal */
+#clinicalPortal {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 92% 18%, rgba(125, 208, 191, .28), transparent 23%),
+    radial-gradient(circle at 5% 70%, rgba(71, 149, 186, .14), transparent 28%),
+    linear-gradient(135deg, #eef8f5 0%, #f8fbfd 48%, #edf5fb 100%);
+}
+
+#clinicalPortal .page { position:relative; }
+.area-page .hero, .triage-page .hero {
+  min-height: 235px;
+  position: relative;
+  border: 0;
+  border-radius: 25px;
+  color: #fff;
+  padding: 34px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 18px 42px rgba(19, 78, 74, .18);
+  overflow: hidden;
+}
+
+.area-page .hero::before, .triage-page .hero::before {
+  content: "";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(100deg, rgba(12, 54, 53, .95), rgba(15, 118, 110, .74), rgba(15, 118, 110, .28));
+}
+
+.area-page .hero > *, .triage-page .hero > * { position:relative; z-index:1; }
+.area-page .hero h1, .triage-page .hero h1 { color:#fff; font-size:clamp(31px, 4vw, 47px); letter-spacing:-1.25px; }
+.area-page .hero p, .triage-page .hero p { color:rgba(255,255,255,.85); max-width:580px; }
+.area-page .hero .eyebrow, .triage-page .hero .eyebrow { color:#aee6d9; }
+.area-page .hero .area-label, .triage-page .hero .area-label { background:rgba(255,255,255,.16); color:#fff; backdrop-filter:blur(8px); }
+.area-page .hero .stat strong, .triage-page .hero .stat strong { color:#fff; }
+.area-page .hero .stat span, .triage-page .hero .stat span { color:#d8f3ed; }
+.area-hero-back { color:#d8f3ed; }.area-hero-back:hover { color:#fff; }
+
+.area-medicina .hero { background-image:url('../servicio-medicina.jpg'); }
+.area-fonoaudiologia .hero { background-image:url('../servicio-fonoaudiologia.jpg'); }
+.area-fisioterapia .hero { background-image:url('../servicio-fisioterapia.jpg'); }
+.area-odontologia .hero { background-image:url('../servicio-odontologia.jpg'); }
+.area-optometria .hero { background-image:url('../servicio-optometria.jpg'); }
+.area-psicologia .hero { background-image:url('../servicio-psicologia.jpg'); }
+.triage-page .hero { background-image:url('../birigadaj.jpeg'); }
+
+#clinicalPortal .form-card, #clinicalPortal .patient-card { box-shadow:0 10px 28px rgba(21, 69, 65, .07); }
+#clinicalPortal .section-title { background:linear-gradient(90deg, #f2fbf8, #f9fcfe); }
+#clinicalPortal .section-title h2 { color:var(--dark); font-size:20px; }
+#clinicalPortal .field label { color:#285a55; letter-spacing:.1px; }
+#clinicalPortal input, #clinicalPortal select, #clinicalPortal textarea { background:rgba(255,255,255,.92); }
+#clinicalPortal input:focus, #clinicalPortal select:focus, #clinicalPortal textarea:focus { box-shadow:0 0 0 4px rgba(63, 170, 151, .18); }
+#clinicalPortal .primary { box-shadow:0 8px 18px rgba(15,118,110,.2); }
 @media(max-width:720px){.clinical-dashboard{padding:26px 14px 60px}.dashboard-heading{align-items:start;flex-direction:column}.triage-card{grid-template-columns:auto 1fr}.triage-card button{grid-column:1/-1;width:100%}.areas-grid{grid-template-columns:1fr}.area-card{padding:18px}}
