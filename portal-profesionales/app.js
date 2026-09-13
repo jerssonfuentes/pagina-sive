@@ -81,4 +81,21 @@ function drawSections(cycle,data){const cfg=specific[cycle],container=$('#formSe
 function exportBackup(records){const blob=new Blob([JSON.stringify({app:'SIVE - Salud Integral Vocacional Estudiantil',version:1,exportedAt:new Date().toISOString(),records},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`sive-respaldo-${new Date().toISOString().slice(0,10)}.json`;a.click();URL.revokeObjectURL(a.href);showToast('Respaldo exportado')}
 async function importBackup(e){const file=e.target.files[0];if(!file)return;try{const data=JSON.parse(await file.text());if(!Array.isArray(data.records))throw Error();if(confirm(`Se importarán ${data.records.length} historias y se reemplazarán las actuales. ¿Continuar?`)){save(data.records);renderList();showToast('Respaldo importado')}}catch{showToast('El archivo no es un respaldo válido')}e.target.value=''}
 function router(){const [,route,id]=location.hash.split('/');if(route==='categorias')renderCategories();else if(route==='nueva'&&id)renderForm(null,id);else if(route==='historia'&&id)renderForm(id);else renderList();$('#app').focus()}
-$('#newBtn').onclick=()=>go('#/categorias');addEventListener('hashchange',router);addEventListener('beforeinstallprompt',e=>{e.preventDefault();installPrompt=e;$('#installBtn').classList.remove('hidden')});$('#installBtn').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;$('#installBtn').classList.add('hidden')}};if('serviceWorker'in navigator){let refreshing=false;navigator.serviceWorker.addEventListener('controllerchange',()=>{if(refreshing)return;refreshing=true;location.reload()});addEventListener('load',async()=>{const registration=await navigator.serviceWorker.register('./sw.js');registration.update()})}router();
+function setAuthStatus(message,kind=''){const status=$('#authStatus');status.textContent=message;status.className=`auth-status ${kind}`}
+function showLogin(message=''){ $('#clinicalPortal').classList.add('hidden');$('#authScreen').classList.remove('hidden');if(message)setAuthStatus(message,'error') }
+async function openClinicalPortal(user){
+  const profileSnapshot=await getDoc(doc(db,'professionals',user.uid));
+  if(!profileSnapshot.exists()){await signOut(auth);showLogin('Tu cuenta aún no ha sido habilitada por el administrador de SIVE.');return}
+  const profile=profileSnapshot.data();
+  if(profile.active!==true||profile.organizationId!==ORGANIZATION_ID){await signOut(auth);showLogin('Tu cuenta no tiene autorización activa para este portal.');return}
+  currentUser=user;currentProfessional=profile;$('#professionalName').textContent=profile.name||user.email;setAuthStatus('');
+  try{await loadRecords()}catch(error){console.error(error);await signOut(auth);showLogin('No fue posible validar el acceso a los expedientes. Contacta al administrador.');return}
+  $('#authScreen').classList.add('hidden');$('#clinicalPortal').classList.remove('hidden');router();
+}
+function startAuthentication(){
+  if(!isFirebaseConfigured){showLogin('Falta configurar Firebase. Consulta FIREBASE-SETUP.md antes de publicar el portal.');return}
+  $('#loginForm').addEventListener('submit',async event=>{event.preventDefault();const button=$('#loginForm button[type="submit"]');button.disabled=true;setAuthStatus('Verificando acceso…');try{await signInWithEmailAndPassword(auth,$('#loginEmail').value.trim(),$('#loginPassword').value);setAuthStatus('')}catch(error){console.error(error);setAuthStatus('No fue posible ingresar. Verifica tus credenciales o solicita habilitación.','error')}finally{button.disabled=false}});
+  $('#resetPassword').onclick=async()=>{const email=$('#loginEmail').value.trim();if(!email){setAuthStatus('Escribe tu correo institucional para restablecer la contraseña.','error');return}try{await sendPasswordResetEmail(auth,email);setAuthStatus('Enviamos las instrucciones de restablecimiento a tu correo.','success')}catch(error){console.error(error);setAuthStatus('No fue posible enviar el correo de restablecimiento.','error')}};
+  $('#logoutBtn').onclick=()=>signOut(auth);onAuthStateChanged(auth,user=>{if(user)openClinicalPortal(user);else{currentUser=null;currentProfessional=null;recordsCache=[];showLogin()}});
+}
+$('#newBtn').onclick=()=>go('#/categorias');addEventListener('hashchange',()=>{if(currentUser)router()});$('#installBtn').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;$('#installBtn').classList.add('hidden')}};startAuthentication();
