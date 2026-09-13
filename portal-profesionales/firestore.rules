@@ -26,5 +26,17 @@ service cloud.firestore {
         && request.resource.data.createdBy == resource.data.createdBy;
       allow delete: if administrator();
     }
+
+    match /triageRecords/{recordId} {
+      allow read: if activeProfessional();
+      allow create: if activeProfessional()
+        && request.resource.data.organizationId == 'sive'
+        && request.resource.data.createdBy == request.auth.uid;
+      allow update: if activeProfessional()
+        && resource.data.organizationId == 'sive'
+        && request.resource.data.organizationId == 'sive'
+        && request.resource.data.createdBy == resource.data.createdBy;
+      allow delete: if administrator();
+    }
   }
 }

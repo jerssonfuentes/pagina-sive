@@ -13,4 +13,6 @@
 .area-card .area-icon { background:var(--mint); margin-bottom:16px; }.area-card h3 { margin:0 0 5px; color:var(--dark); font-size:18px; }.area-card p { margin:0; color:var(--muted); font-size:13px; }.area-card small { display:block; margin-top:14px; color:var(--teal); font-weight:800; }
 .area-hero-back { border:0; background:transparent; color:var(--teal); font-weight:800; padding:0 0 8px; }
 .area-label { display:inline-block; margin-bottom:8px; padding:5px 10px; border-radius:99px; background:var(--mint); color:var(--dark); font-size:12px; font-weight:800; }
+.triage-form { margin-top:24px; }
+.triage-form .form-actions { grid-column:1 / -1; }
 @media(max-width:720px){.clinical-dashboard{padding:26px 14px 60px}.dashboard-heading{align-items:start;flex-direction:column}.triage-card{grid-template-columns:auto 1fr}.triage-card button{grid-column:1/-1;width:100%}.areas-grid{grid-template-columns:1fr}.area-card{padding:18px}}
