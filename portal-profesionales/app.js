@@ -1,7 +1,7 @@
 import { calculateWho, renderWhoResults } from './zscore.js';
 import { auth, db, isFirebaseConfigured } from './firebase-config.js';
-import { onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js';
-import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc, where } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import { onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
+import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc, where } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 const ORGANIZATION_ID='sive';
 let currentUser=null, currentProfessional=null, recordsCache=[], pendingPersist=Promise.resolve();
