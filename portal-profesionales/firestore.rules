@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function profile() { return get(/databases/$(database)/documents/professionals/$(request.auth.uid)); }
+    function activeProfessional() {
+      return signedIn() && profile().data.active == true && profile().data.organizationId == 'sive';
+    }
+    function administrator() { return activeProfessional() && profile().data.role == 'admin'; }
+
+    // Las cuentas se crean en Firebase Authentication y un administrador crea
+    // después su perfil profesional. Así nadie obtiene acceso solo por registrarse.
+    match /professionals/{userId} {
+      allow get: if signedIn() && (request.auth.uid == userId || administrator());
+      allow list, create, update, delete: if administrator();
+    }
+
+    match /clinicalRecords/{recordId} {
+      allow read: if activeProfessional();
+      allow create: if activeProfessional()
+        && request.resource.data.organizationId == 'sive'
+        && request.resource.data.createdBy == request.auth.uid;
+      allow update: if activeProfessional()
+        && resource.data.organizationId == 'sive'
+        && request.resource.data.organizationId == 'sive'
+        && request.resource.data.createdBy == resource.data.createdBy;
+      allow delete: if administrator();
+    }
+  }
+}
