@@ -1,7 +1,7 @@
 import { calculateWho, renderWhoResults } from './zscore.js';
 import { auth, db, isFirebaseConfigured } from './firebase-config.js';
 import { onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
-import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc, where } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 const ORGANIZATION_ID='sive';
 let currentUser=null, currentProfessional=null, recordsCache=[], pendingPersist=Promise.resolve();
@@ -37,7 +37,7 @@ const $=(s,r=document)=>r.querySelector(s);let installPrompt=null;
 const load=()=>recordsCache.slice();
 const save=records=>{recordsCache=records.slice();pendingPersist=syncRecords(recordsCache);return pendingPersist};
 const uid=()=>crypto.randomUUID?.()||`${Date.now()}-${Math.random()}`;
-async function loadRecords(){const recordsQuery=query(collection(db,'clinicalRecords'),where('organizationId','==',ORGANIZATION_ID),orderBy('updatedAt','desc'));const snapshot=await getDocs(recordsQuery);recordsCache=snapshot.docs.map(item=>item.data())}
+async function loadRecords(){const recordsQuery=query(collection(db,'clinicalRecords'),orderBy('updatedAt','desc'));const snapshot=await getDocs(recordsQuery);recordsCache=snapshot.docs.map(item=>item.data()).filter(record=>record.organizationId===ORGANIZATION_ID)}
 async function syncRecords(records){await Promise.all(records.map(record=>setDoc(doc(db,'clinicalRecords',record.id),{...record,organizationId:ORGANIZATION_ID,createdBy:record.createdBy||currentUser.uid,updatedBy:currentUser.uid})));}
 async function deleteRecord(id){await deleteDoc(doc(db,'clinicalRecords',id));recordsCache=recordsCache.filter(record=>record.id!==id)}
 async function saveWordOnline(){await pendingPersist;return{ok:true}}
