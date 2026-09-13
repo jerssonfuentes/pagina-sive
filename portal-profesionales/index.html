@@ -7,6 +7,7 @@
   <meta name="description" content="Historias clínicas pediátricas por ciclo vital" />
   <link rel="icon" href="logo-sive.jpeg" type="image/jpeg" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="login.css" />
   <link rel="stylesheet" href="brand.css" />
   <title>SIVE | Salud Integral Vocacional Estudiantil</title>
 </head>
@@ -19,7 +20,12 @@
       <h1 id="authTitle">Ingreso de profesionales</h1>
       <p>Accede con tu correo institucional autorizado para consultar o registrar historias clínicas.</p>
       <label>Correo institucional<input id="loginEmail" type="email" autocomplete="username" required /></label>
-      <label>Contraseña<input id="loginPassword" type="password" autocomplete="current-password" required /></label>
+      <label>Contraseña
+        <span class="password-control">
+          <input id="loginPassword" type="password" autocomplete="current-password" required />
+          <button id="togglePassword" type="button" aria-label="Mostrar contraseña" aria-pressed="false"><i class="fa-solid fa-eye"></i><span>Mostrar</span></button>
+        </span>
+      </label>
       <button class="primary" type="submit">Ingresar de forma segura</button>
       <button id="resetPassword" class="text-button" type="button">Restablecer contraseña</button>
       <p id="authStatus" class="auth-status" role="status" aria-live="polite"></p>

@@ -1,7 +1,7 @@
 import { calculateWho, renderWhoResults } from './zscore.js';
 import { auth, db, isFirebaseConfigured } from './firebase-config.js';
 import { onAuthStateChanged, signInWithEmailAndPassword, sendPasswordResetEmail, signOut } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js';
-import { collection, deleteDoc, doc, getDoc, getDocs, orderBy, query, setDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
+import { collection, deleteDoc, doc, getDoc, getDocs, setDoc } from 'https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js';
 
 const ORGANIZATION_ID='sive';
 let currentUser=null, currentProfessional=null, recordsCache=[], pendingPersist=Promise.resolve();
@@ -37,7 +37,7 @@ const $=(s,r=document)=>r.querySelector(s);let installPrompt=null;
 const load=()=>recordsCache.slice();
 const save=records=>{recordsCache=records.slice();pendingPersist=syncRecords(recordsCache);return pendingPersist};
 const uid=()=>crypto.randomUUID?.()||`${Date.now()}-${Math.random()}`;
-async function loadRecords(){const recordsQuery=query(collection(db,'clinicalRecords'),orderBy('updatedAt','desc'));const snapshot=await getDocs(recordsQuery);recordsCache=snapshot.docs.map(item=>item.data()).filter(record=>record.organizationId===ORGANIZATION_ID)}
+async function loadRecords(){const snapshot=await getDocs(collection(db,'clinicalRecords'));recordsCache=snapshot.docs.map(item=>item.data()).filter(record=>record.organizationId===ORGANIZATION_ID)}
 async function syncRecords(records){await Promise.all(records.map(record=>setDoc(doc(db,'clinicalRecords',record.id),{...record,organizationId:ORGANIZATION_ID,createdBy:record.createdBy||currentUser.uid,updatedBy:currentUser.uid})));}
 async function deleteRecord(id){await deleteDoc(doc(db,'clinicalRecords',id));recordsCache=recordsCache.filter(record=>record.id!==id)}
 async function saveWordOnline(){await pendingPersist;return{ok:true}}
@@ -89,13 +89,14 @@ async function openClinicalPortal(user){
   const profile=profileSnapshot.data();
   if(profile.active!==true||profile.organizationId!==ORGANIZATION_ID){await signOut(auth);showLogin('Tu cuenta no tiene autorización activa para este portal.');return}
   currentUser=user;currentProfessional=profile;$('#professionalName').textContent=profile.name||user.email;setAuthStatus('');
-  try{await loadRecords()}catch(error){console.error(error);await signOut(auth);showLogin('No fue posible validar el acceso a los expedientes. Contacta al administrador.');return}
+  try{await loadRecords()}catch(error){console.error(error);await signOut(auth);const detail=error?.code==='permission-denied'?'Firebase rechazó el permiso. Verifica que el UID de Authentication coincida con el documento professionals y que las reglas estén publicadas.':`No fue posible consultar los expedientes (${error?.code||'error desconocido'}).`;showLogin(detail);return}
   $('#authScreen').classList.add('hidden');$('#clinicalPortal').classList.remove('hidden');router();
 }
 function startAuthentication(){
   if(!isFirebaseConfigured){showLogin('Falta configurar Firebase. Consulta FIREBASE-SETUP.md antes de publicar el portal.');return}
   $('#loginForm').addEventListener('submit',async event=>{event.preventDefault();const button=$('#loginForm button[type="submit"]');button.disabled=true;setAuthStatus('Verificando acceso…');try{await signInWithEmailAndPassword(auth,$('#loginEmail').value.trim(),$('#loginPassword').value);setAuthStatus('')}catch(error){console.error(error);setAuthStatus('No fue posible ingresar. Verifica tus credenciales o solicita habilitación.','error')}finally{button.disabled=false}});
   $('#resetPassword').onclick=async()=>{const email=$('#loginEmail').value.trim();if(!email){setAuthStatus('Escribe tu correo institucional para restablecer la contraseña.','error');return}try{await sendPasswordResetEmail(auth,email);setAuthStatus('Enviamos las instrucciones de restablecimiento a tu correo.','success')}catch(error){console.error(error);setAuthStatus('No fue posible enviar el correo de restablecimiento.','error')}};
+  $('#togglePassword').onclick=()=>{const field=$('#loginPassword'),button=$('#togglePassword'),showing=field.type==='text';field.type=showing?'password':'text';button.setAttribute('aria-pressed',String(!showing));button.setAttribute('aria-label',showing?'Mostrar contraseña':'Ocultar contraseña');button.querySelector('span').textContent=showing?'Mostrar':'Ocultar';button.querySelector('i').className=showing?'fa-solid fa-eye':'fa-solid fa-eye-slash'};
   $('#logoutBtn').onclick=()=>signOut(auth);onAuthStateChanged(auth,user=>{if(user)openClinicalPortal(user);else{currentUser=null;currentProfessional=null;recordsCache=[];showLogin()}});
 }
 $('#newBtn').onclick=()=>go('#/categorias');addEventListener('hashchange',()=>{if(currentUser)router()});$('#installBtn').onclick=async()=>{if(installPrompt){await installPrompt.prompt();installPrompt=null;$('#installBtn').classList.add('hidden')}};startAuthentication();

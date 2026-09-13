@@ -1,0 +1,22 @@
+.password-control {
+  position: relative;
+  display: block;
+}
+
+.password-control input {
+  padding-right: 96px;
+}
+
+.password-control button {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: transparent;
+  color: var(--teal);
+  padding: 6px 8px;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
