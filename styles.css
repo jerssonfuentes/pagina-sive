@@ -1390,3 +1390,20 @@ img   { max-width: 100%; display: block; }
   .vf-submit-row { align-items: stretch; flex-direction: column; }
   .vf-submit { justify-content: center; width: 100%; }
 }
+
+/* Acceso profesional y navegación pública en pantallas pequeñas */
+@media (max-width: 900px) {
+  .nav { height: auto; min-height: 74px; flex-wrap: wrap; padding-top: .65rem; padding-bottom: .65rem; }
+  .nav-links { display: flex; order: 3; width: 100%; overflow-x: auto; gap: .3rem; padding: .25rem 0 .05rem; scrollbar-width: thin; }
+  .nav-links li { flex: 0 0 auto; }
+  .nav-links button, .nav-professionals { white-space: nowrap; font-size: .78rem; padding: .4rem .68rem; }
+  .nav-cta { padding: .4rem .75rem !important; }
+}
+@media (max-width: 600px) {
+  .topbar { height: auto; min-height: 38px; justify-content: flex-start; flex-wrap: wrap; padding-top: .4rem; padding-bottom: .4rem; gap: .45rem .7rem; }
+  .topbar a { font-size: .68rem; }
+  .tb-sep { display: none; }
+  .nav-logo img { width: 42px; height: 42px; }
+  .nl-brand { font-size: 1.12rem; }
+  .nl-sub { max-width: 190px; white-space: normal; }
+}
