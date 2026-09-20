@@ -7,4 +7,4 @@
 5. Para cada cuenta creada, agrega en Firestore `professionals/<UID>` un documento con: `active: true`, `organizationId: "sive"`, `name: "Nombre profesional"` y `role: "professional"`. Para el primer administrador usa `role: "admin"`.
 6. Agrega el dominio publicado de SIVE en **Authentication > Settings > Authorized domains**. Activa App Check antes de producción y prueba las reglas con el emulador o cuentas de prueba.
 
-Las historias clínicas se guardan en `clinicalRecords` y los registros iniciales en `triageRecords`. Todo profesional activo de SIVE puede consultar y actualizar expedientes; solo `admin` puede eliminarlos. Cada vez que se modifique `firestore.rules`, publícalas nuevamente en Firebase.
+Las historias clínicas se guardan en `clinicalRecords`, los registros iniciales en `triageRecords` y las valoraciones de Psicología en `psychologyRecords`. Todo profesional activo de SIVE puede consultar y actualizar expedientes; solo `admin` puede eliminarlos. Cada vez que se modifique `firestore.rules`, publícalas nuevamente en Firebase.
