@@ -38,7 +38,7 @@
   </section>
 
   <div id="clinicalPortal" class="hidden portal-layout">
-  <aside class="portal-sidebar">
+  <aside id="portalSidebar" class="portal-sidebar">
     <a class="brand portal-brand" href="#/dashboard" aria-label="Panel principal">
       <img class="brand-logo" src="logo-sive.jpeg" alt="Logo de SIVE" />
       <span><strong>SIVE</strong><small>Portal clínico</small></span>
@@ -58,6 +58,7 @@
   </aside>
   <section class="portal-workspace">
     <header class="portal-topbar">
+      <button id="portalMenuButton" class="portal-menu" type="button" aria-label="Abrir menú de áreas" aria-controls="portalSidebar" aria-expanded="false">☰ <span>Menú</span></button>
       <label class="portal-search"><span>⌕</span><input type="search" placeholder="Buscar en el portal…" aria-label="Buscar en el portal"></label>
       <div class="portal-user"><div class="portal-avatar">S</div><div><strong id="professionalName"></strong><small>Profesional SIVE</small></div></div>
       <button id="logoutBtn" class="portal-logout">Salir</button>
