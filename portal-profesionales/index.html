@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="login.css" />
   <link rel="stylesheet" href="dashboard.css" />
   <link rel="stylesheet" href="psychology.css" />
+  <link rel="stylesheet" href="portal-ui.css" />
   <link rel="stylesheet" href="brand.css" />
   <title>SIVE | Salud Integral Vocacional Estudiantil</title>
 </head>
@@ -35,22 +36,35 @@
     </form>
   </section>
 
-  <div id="clinicalPortal" class="hidden">
-  <header class="topbar">
-    <a class="brand" href="#/pacientes" aria-label="Inicio">
+  <div id="clinicalPortal" class="hidden portal-layout">
+  <aside class="portal-sidebar">
+    <a class="brand portal-brand" href="#/dashboard" aria-label="Panel principal">
       <img class="brand-logo" src="logo-sive.jpeg" alt="Logo de SIVE" />
-      <span><strong>SIVE</strong><small>Salud Integral Vocacional Estudiantil</small></span>
+      <span><strong>SIVE</strong><small>Portal clínico</small></span>
     </a>
-    <nav>
-      <span id="professionalName" class="professional-name"></span>
-      <button id="dashboardBtn" class="ghost">Panel</button>
-      <button id="logoutBtn" class="ghost">Cerrar sesión</button>
-      <button id="installBtn" class="ghost hidden">Instalar</button>
-      <button id="newBtn" class="primary">+ Nueva historia</button>
+    <nav class="sidebar-nav" aria-label="Módulos clínicos">
+      <button data-portal-route="#/dashboard"><span>⌂</span> Dashboard</button>
+      <button data-portal-route="#/triaje"><span>✚</span> Triage general</button>
+      <p>Áreas clínicas</p>
+      <button data-portal-route="#/area/medicina"><span>◉</span> Medicina general</button>
+      <button data-portal-route="#/area/psicologia"><span>◌</span> Psicología</button>
+      <button data-portal-route="#/area/fonoaudiologia"><span>◒</span> Fonoaudiología</button>
+      <button data-portal-route="#/area/fisioterapia"><span>◈</span> Fisioterapia</button>
+      <button data-portal-route="#/area/odontologia"><span>◍</span> Odontología</button>
+      <button data-portal-route="#/area/optometria"><span>◉</span> Optometría</button>
     </nav>
-  </header>
-
-  <main id="app" tabindex="-1"></main>
+    <div class="sidebar-help"><strong>Atención segura</strong><span>Información clínica de acceso restringido.</span></div>
+  </aside>
+  <section class="portal-workspace">
+    <header class="portal-topbar">
+      <label class="portal-search"><span>⌕</span><input type="search" placeholder="Buscar en el portal…" aria-label="Buscar en el portal"></label>
+      <div class="portal-user"><div class="portal-avatar">S</div><div><strong id="professionalName"></strong><small>Profesional SIVE</small></div></div>
+      <button id="logoutBtn" class="portal-logout">Salir</button>
+      <button id="installBtn" class="ghost hidden">Instalar</button>
+      <button id="newBtn" class="primary portal-new">+ Nueva historia</button>
+    </header>
+    <main id="app" tabindex="-1"></main>
+  </section>
 
   <template id="listView">
     <section class="page">
