@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="portal-ui.css" />
   <link rel="stylesheet" href="fono.css" />
   <link rel="stylesheet" href="brand.css" />
+  <link rel="stylesheet" href="reports.css" />
   <title>SIVE | Salud Integral Vocacional Estudiantil</title>
 </head>
 <body>
@@ -45,6 +46,7 @@
     </a>
     <nav class="sidebar-nav" aria-label="Módulos clínicos">
       <button data-portal-route="#/dashboard"><span>⌂</span> Dashboard</button>
+      <button id="reportsNav" data-portal-route="#/informes"><span>▤</span> Informes</button>
       <button data-portal-route="#/triaje"><span>✚</span> Triage general</button>
       <p>Áreas clínicas</p>
       <button data-portal-route="#/area/medicina"><span>◉</span> Medicina general</button>
@@ -111,5 +113,6 @@
   <div id="toast" role="status" aria-live="polite"></div>
   </div>
   <script type="module" src="app.js"></script>
+  <script type="module" src="reports.js"></script>
 </body>
 </html>
