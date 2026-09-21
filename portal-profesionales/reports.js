@@ -90,6 +90,53 @@ function drawReports() {
   app.querySelectorAll('select').forEach(select => select.addEventListener('change', drawReports));
 }
 
+function downloadCsv(records) {
+  const headers = ['Paciente', 'Área', 'Brigada', 'Profesional que atendió', 'Fecha', 'Tipo de registro'];
+  const quote = value => `"${String(value ?? '').replaceAll('"', '""')}"`;
+  const lines = records.map(record => [record.patientName || record.name || 'Paciente sin nombre', reportArea(record, record.source), record.brigadeName || 'Sin brigada', record.professionalName || 'No registrado', record.visitDate || '', record.formType || (record.source === 'triage' ? 'Triage' : 'Valoración clínica')].map(quote).join(','));
+  const file = new Blob([[headers.map(quote).join(','), ...lines].join('\n')], { type: 'text/csv;charset=utf-8' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(file);
+  link.download = `informes-sive-${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
+
+function drawReportsV2() {
+  const app = $('#app');
+  const all = allReports();
+  const previous = {
+    area: $('#reportArea', app)?.value || '', brigade: $('#reportBrigade', app)?.value || '', professional: $('#reportProfessional', app)?.value || '',
+    start: $('#reportStart', app)?.value || '', end: $('#reportEnd', app)?.value || '', search: $('#reportSearch', app)?.value || ''
+  };
+  const areas = [...new Set(all.map(record => reportArea(record, record.source)))].sort();
+  const brigades = [...new Set(all.map(record => record.brigadeName || 'Sin brigada'))].sort();
+  const professionals = [...new Set(all.map(record => record.professionalName || 'No registrado'))].sort();
+  const selectOptions = (items, selected, first) => `<option value="">${first}</option>${items.map(item => `<option value="${safe(item)}" ${item === selected ? 'selected' : ''}>${safe(item)}</option>`).join('')}`;
+  const current = all.filter(record => {
+    const date = record.visitDate || record.createdAt?.slice?.(0, 10) || '';
+    const text = `${record.patientName || record.name || ''} ${record.brigadeName || ''} ${record.professionalName || ''}`.toLowerCase();
+    return (!previous.area || reportArea(record, record.source) === previous.area)
+      && (!previous.brigade || (record.brigadeName || 'Sin brigada') === previous.brigade)
+      && (!previous.professional || (record.professionalName || 'No registrado') === previous.professional)
+      && (!previous.start || date >= previous.start) && (!previous.end || date <= previous.end)
+      && (!previous.search || text.includes(previous.search.toLowerCase()));
+  });
+  const totalAreas = new Set(all.map(record => reportArea(record, record.source))).size;
+  const summary = [
+    ['👥', 'Informe de atenciones', `${all.length} atenciones registradas`, 'blue'],
+    ['▥', 'Informe de servicios', `${totalAreas} áreas con registros`, 'green'],
+    ['⌁', 'Informe de brigadas', `${brigades.filter(item => item !== 'Sin brigada').length} brigadas registradas`, 'purple'],
+    ['♙', 'Informe de profesionales', `${professionals.filter(item => item !== 'No registrado').length} profesionales`, 'orange']
+  ];
+  app.innerHTML = `<section class="page reports-page reports-v2"><header class="report-titlebar"><div class="report-title-icon">▥</div><div><h1>Informes</h1><p>Consulta y genera informes de la gestión en salud de la Corporación SIVE.</p></div><button id="generateReport" class="report-generate" type="button">⇩ Generar informe</button></header><section class="report-filter-panel"><label>Tipo de informe<select id="reportArea">${selectOptions(areas, previous.area, 'Todos')}</select></label><label>Fecha inicio<input id="reportStart" type="date" value="${safe(previous.start)}"></label><label>Fecha fin<input id="reportEnd" type="date" value="${safe(previous.end)}"></label><label>Brigada<select id="reportBrigade">${selectOptions(brigades, previous.brigade, 'Todas')}</select></label><label>Profesional<select id="reportProfessional">${selectOptions(professionals, previous.professional, 'Todos')}</select></label><button id="filterReports" class="report-filter-button" type="button">⌕ Filtrar</button></section><section class="report-summary-cards">${summary.map(([icon, title, text, tone]) => `<article class="report-summary ${tone}"><span>${icon}</span><div><h2>${title}</h2><p>${text}</p></div><b>→</b></article>`).join('')}</section><section class="recent-reports"><div class="recent-heading"><div><h2>Informes recientes</h2><p>Registros generados automáticamente por el portal profesional.</p></div><label class="report-search">⌕<input id="reportSearch" type="search" placeholder="Buscar paciente, brigada o profesional" value="${safe(previous.search)}"></label></div><div class="report-table-wrap"><table><thead><tr><th>Paciente</th><th>Área</th><th>Brigada</th><th>Fecha de atención</th><th>Profesional que atendió</th><th>Acción</th></tr></thead><tbody>${current.map(record => `<tr><td><strong>${safe(record.patientName || record.name || 'Paciente sin nombre')}</strong><small>${safe(record.formType || (record.source === 'triage' ? 'Triage' : 'Valoración clínica'))}</small></td><td><span class="report-area">${safe(reportArea(record, record.source))}</span></td><td>${safe(record.brigadeName || 'Sin brigada')}</td><td>${safe(formatDate(record.visitDate || record.createdAt?.slice?.(0, 10)))}</td><td>${safe(record.professionalName || 'No registrado')}</td><td><button class="report-row-export" type="button" data-id="${safe(record.id)}" aria-label="Descargar fila">⇩</button></td></tr>`).join('') || '<tr><td class="report-no-data" colspan="6">No hay informes con los filtros seleccionados.</td></tr>'}</tbody></table></div><footer class="report-footer">Mostrando ${current.length} de ${all.length} informes</footer></section></section>`;
+  $('#generateReport', app).onclick = () => downloadCsv(current);
+  $('#filterReports', app).onclick = drawReportsV2;
+  ['reportArea', 'reportBrigade', 'reportProfessional', 'reportStart', 'reportEnd'].forEach(id => $(`#${id}`, app).addEventListener('change', drawReportsV2));
+  $('#reportSearch', app).addEventListener('input', drawReportsV2);
+  app.querySelectorAll('.report-row-export').forEach(button => button.onclick = () => downloadCsv(current.filter(record => record.id === button.dataset.id)));
+}
+
 function openReports() {
   if (professional?.role !== 'admin') {
     $('#app').innerHTML = '<section class="page"><div class="empty"><div>🔒</div><h2>Acceso restringido</h2><p>El consolidado de informes está disponible para la coordinación autorizada de SIVE.</p></div></section>';
@@ -98,7 +145,7 @@ function openReports() {
   stopReports?.();
   const subscribe = (key, collectionName) => onSnapshot(collection(db, collectionName), snapshot => {
     reports[key] = snapshot.docs.map(item => item.data());
-    drawReports();
+    drawReportsV2();
   });
   const stops = [subscribe('clinical', 'clinicalRecords'), subscribe('triage', 'triageRecords'), subscribe('psychology', 'psychologyRecords')];
   stopReports = () => stops.forEach(stop => stop());
