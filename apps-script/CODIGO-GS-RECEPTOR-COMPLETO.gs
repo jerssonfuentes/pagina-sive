@@ -66,7 +66,7 @@ function validateBrigadeSubmission_(data) {
   ['participacion','protocolos','sin_relacion_laboral','datos_brigada'].forEach(function (key) {
     if (data[key] !== true) throw new Error('Debe aceptar la autorización: ' + key);
   });
-  if (!findBrigadeById_(data.brigade_id)) throw new Error('La brigada seleccionada no está activa o ya no existe.');
+  if (!brigadeFromSubmission_(data)) throw new Error('La brigada seleccionada ya no está disponible.');
 }
 
 function validEmail_(email) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean_(email, 180)); }
@@ -91,8 +91,17 @@ function findBrigadeById_(id) {
   return getActiveBrigades_().brigades.filter(function (brigade) { return brigade.id === clean_(id,80); })[0] || null;
 }
 
+function brigadeFromSubmission_(data) {
+  const scheduled = findBrigadeById_(data.brigade_id);
+  if (scheduled) return scheduled;
+  const submitted = data.brigade;
+  if (!submitted || typeof submitted !== 'object') return null;
+  if (!clean_(submitted.nombre, 180)) return null;
+  return { id: clean_(submitted.id || data.brigade_id, 80), nombre: clean_(submitted.nombre, 180), fecha: clean_(submitted.fecha, 40), lugar: clean_(submitted.lugar, 250), horario: clean_(submitted.horario, 100), cupos: clean_(submitted.cupos, 20) };
+}
+
 function createBrigadePdf_(data, submissionId, now) {
-  const brigade = findBrigadeById_(data.brigade_id);
+  const brigade = brigadeFromSubmission_(data);
   if (!brigade) throw new Error('La brigada seleccionada ya no está disponible.');
   const folder = getOrCreateBrigadeFolder_(brigade);
   const name = safePart_(data.nombre) || 'Sin_nombre';

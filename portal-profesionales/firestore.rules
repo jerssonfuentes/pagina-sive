@@ -15,6 +15,25 @@ service cloud.firestore {
       allow list, create, update, delete: if administrator();
     }
 
+    match /brigades/{brigadeId} {
+      allow get, list: if (resource.data.organizationId == 'sive'
+        && resource.data.status == 'Activa') || activeProfessional();
+      allow create: if administrator()
+        && request.resource.data.organizationId == 'sive';
+      allow update, delete: if administrator()
+        && resource.data.organizationId == 'sive'
+        && request.resource.data.organizationId == 'sive';
+    }
+
+    match /brigadeRegistrations/{registrationId} {
+      allow read: if activeProfessional();
+      allow create: if request.resource.data.organizationId == 'sive'
+        && request.resource.data.brigadeId is string
+        && request.resource.data.participantName is string
+        && request.resource.data.profession is string;
+      allow update, delete: if administrator();
+    }
+
     match /clinicalRecords/{recordId} {
       allow read: if activeProfessional();
       allow create: if activeProfessional()

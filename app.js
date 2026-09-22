@@ -199,6 +199,7 @@ async function requestBrigades(attempt) {
 }
 
 async function loadBrigades() {
+  if (window.loadFirestoreBrigades) return window.loadFirestoreBrigades();
   var container = document.getElementById('brigade-options');
   if (!container || !GOOGLE_SCRIPT_URL) return;
 
@@ -284,6 +285,8 @@ async function submitBrigadeForm(event) {
   ['participacion', 'protocolos', 'sin_relacion_laboral', 'datos_brigada'].forEach(function(name) {
     payload[name] = Boolean(form.elements[name] && form.elements[name].checked);
   });
+  var selected = availableBrigades.find(function(item) { return String(item.id) === String(payload.brigade_id); });
+  if (selected) payload.brigade = selected;
 
   submitButton.disabled = true;
   submitButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Generando autorización...';
@@ -298,6 +301,9 @@ async function submitBrigadeForm(event) {
     var result = await response.json();
     if (!result || result.ok !== true) {
       throw new Error(result && result.error ? result.error : 'Apps Script no confirmó la inscripción.');
+    }
+    if (window.saveBrigadeRegistration) {
+      try { await window.saveBrigadeRegistration(payload, result); } catch (registrationError) { console.error('No fue posible sincronizar la inscripción profesional', registrationError); }
     }
     status.className = 'vf-status success';
     status.innerHTML = '<i class="fa-solid fa-circle-check"></i> Inscripción exitosa. La autorización en PDF se guardó correctamente en Google Drive.';
