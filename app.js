@@ -199,9 +199,20 @@ async function requestBrigades(attempt) {
 }
 
 async function loadBrigades() {
-  if (window.loadFirestoreBrigades) return window.loadFirestoreBrigades();
   var container = document.getElementById('brigade-options');
   if (!container || !GOOGLE_SCRIPT_URL) return;
+
+  if (window.loadFirestoreBrigades) {
+    try {
+      await Promise.race([
+        window.loadFirestoreBrigades(),
+        new Promise(function(resolve, reject) { setTimeout(function() { reject(new Error('Tiempo de espera de Firebase')); }, 9000); })
+      ]);
+      return;
+    } catch (firestoreError) {
+      console.warn('No fue posible consultar brigadas en Firebase; se usará la programación institucional.', firestoreError);
+    }
+  }
 
   var slowMessage = setTimeout(function() {
     container.innerHTML = '<div class="brigade-loading"><i class="fa-solid fa-spinner fa-spin"></i> Google Drive está tardando un poco. Seguimos consultando la programación...</div>';
