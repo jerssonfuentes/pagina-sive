@@ -61,10 +61,37 @@ async function addTriageAdminActions() {
   });
 }
 
-new MutationObserver(() => { addTriageAdminActions().catch(console.error); }).observe(document.body, { childList: true, subtree: true });
+async function addPsychologyAdminActions() {
+  if (!isAdministrator || !document.querySelector('.psychology-history')) return;
+  const cards = [...document.querySelectorAll('.psychology-history .patient-card')];
+  if (!cards.length || cards.every(card => card.dataset.adminActions === 'true')) return;
+  const snapshot = await getDocs(collection(db, 'psychologyRecords'));
+  const records = snapshot.docs.map(item => item.data()).filter(record => record.organizationId === 'sive')
+    .sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+  cards.forEach((card, index) => {
+    if (card.dataset.adminActions === 'true' || !records[index]) return;
+    card.dataset.adminActions = 'true';
+    const actions = document.createElement('div');
+    actions.className = 'card-actions admin-psychology-actions';
+    actions.innerHTML = '<button type="button" class="danger">Eliminar</button>';
+    actions.querySelector('button').onclick = async () => {
+      if (!confirm('¿Eliminar esta valoración de Psicología? Esta acción no se puede deshacer.')) return;
+      try { await deleteDoc(doc(db, 'psychologyRecords', records[index].id)); location.reload(); }
+      catch (error) { console.error(error); alert('No fue posible eliminar la valoración.'); }
+    };
+    card.append(actions);
+  });
+}
+
+function attachAdminActions() {
+  addTriageAdminActions().catch(console.error);
+  addPsychologyAdminActions().catch(console.error);
+}
+
+new MutationObserver(attachAdminActions).observe(document.body, { childList: true, subtree: true });
 onAuthStateChanged(auth, async user => {
   if (!user) { isAdministrator = false; return; }
   const profile = await getDoc(doc(db, 'professionals', user.uid));
   isAdministrator = profile.exists() && profile.data().active === true && profile.data().role === 'admin';
-  addTriageAdminActions().catch(console.error);
+  attachAdminActions();
 });
