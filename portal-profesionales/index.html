@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="brand.css" />
   <link rel="stylesheet" href="reports.css" />
   <link rel="stylesheet" href="admin-actions.css" />
+  <link rel="stylesheet" href="navigation-flow.css" />
   <title>SIVE | Salud Integral Vocacional Estudiantil</title>
 </head>
 <body>
@@ -51,7 +52,7 @@
       <span><strong>SIVE</strong><small>Portal clínico</small></span>
     </a>
     <nav class="sidebar-nav" aria-label="Módulos clínicos">
-      <button data-portal-route="#/dashboard"><span>⌂</span> Dashboard</button>
+      <button data-portal-route="#/dashboard"><span>⌂</span> Inicio</button>
       <button id="reportsNav" data-portal-route="#/informes"><span>▤</span> Informes</button>
       <button data-portal-route="#/triaje"><span>✚</span> Triage general</button>
       <p>Áreas clínicas</p>
@@ -71,7 +72,7 @@
       <div class="portal-user"><div class="portal-avatar">S</div><div><strong id="professionalName"></strong><small>Profesional SIVE</small></div></div>
       <button id="logoutBtn" class="portal-logout">Salir</button>
       <button id="installBtn" class="ghost hidden">Instalar</button>
-      <button id="newBtn" class="primary portal-new">+ Nueva historia</button>
+      <button id="newBtn" class="primary portal-new">+ Nuevo triage</button>
     </header>
     <main id="app" tabindex="-1"></main>
   </section>
@@ -121,5 +122,6 @@
   <script type="module" src="app.js"></script>
   <script type="module" src="reports.js"></script>
   <script type="module" src="admin-actions.js"></script>
+  <script type="module" src="navigation-flow.js"></script>
 </body>
 </html>
