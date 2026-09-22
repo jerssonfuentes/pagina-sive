@@ -5,7 +5,7 @@ function go(path) { location.hash = path; }
 function configureNewTriage() {
   const button = $('#newBtn');
   if (!button) return;
-  button.textContent = '+ Nuevo triage';
+  if (button.textContent !== '+ Nuevo triage') button.textContent = '+ Nuevo triage';
   button.onclick = () => go('#/triaje');
 }
 
