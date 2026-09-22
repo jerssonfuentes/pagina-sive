@@ -673,4 +673,5 @@ document.addEventListener('keydown', function(e) {
 document.addEventListener('DOMContentLoaded', function() {
   loadPosts();
   loadBrigades();
+  setInterval(loadBrigades, 60000);
 });
