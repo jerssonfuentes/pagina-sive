@@ -14,28 +14,34 @@
   <link rel="stylesheet" href="fono.css" />
   <link rel="stylesheet" href="brand.css" />
   <link rel="stylesheet" href="reports.css" />
+  <link rel="stylesheet" href="admin-actions.css" />
   <title>SIVE | Salud Integral Vocacional Estudiantil</title>
 </head>
 <body>
   <section id="authScreen" class="auth-screen" aria-labelledby="authTitle">
-    <form id="loginForm" class="auth-card">
-      <a class="back-public" href="../index.html">← Volver a SIVE</a>
-      <img class="auth-logo" src="logo-sive.jpeg" alt="SIVE" />
-      <p class="eyebrow">ACCESO RESTRINGIDO</p>
-      <h1 id="authTitle">Ingreso de profesionales</h1>
-      <p>Accede con tu correo institucional autorizado para consultar o registrar historias clínicas.</p>
-      <label>Correo institucional<input id="loginEmail" type="email" autocomplete="username" required /></label>
-      <label>Contraseña
-        <span class="password-control">
-          <input id="loginPassword" type="password" autocomplete="current-password" required />
-          <button id="togglePassword" type="button" aria-label="Mostrar contraseña" aria-pressed="false"><i class="fa-solid fa-eye"></i><span>Mostrar</span></button>
-        </span>
-      </label>
-      <button class="primary" type="submit">Ingresar de forma segura</button>
-      <button id="resetPassword" class="text-button" type="button">Restablecer contraseña</button>
-      <p id="authStatus" class="auth-status" role="status" aria-live="polite"></p>
-      <p class="auth-notice"><strong>Uso exclusivo de personal autorizado.</strong> Toda consulta y modificación queda asociada a la cuenta profesional.</p>
-    </form>
+    <div class="auth-shell">
+      <form id="loginForm" class="auth-card">
+        <a class="back-public" href="../index.html">← Volver al sitio público</a>
+        <div class="auth-brand"><img class="auth-logo" src="logo-sive.jpeg" alt="SIVE" /><span><strong>CORPORACIÓN SIVE</strong><small>Salud con sentido humano</small></span></div>
+        <div class="auth-intro"><p class="eyebrow">PORTAL PROFESIONAL</p><h1 id="authTitle">Inicia sesión</h1><p>Accede a tu cuenta autorizada para continuar con los servicios clínicos de SIVE.</p></div>
+        <label>Correo institucional<input id="loginEmail" type="email" placeholder="Usuario o correo electrónico" autocomplete="username" required /></label>
+        <label>Contraseña
+          <span class="password-control">
+            <input id="loginPassword" type="password" placeholder="Contraseña" autocomplete="current-password" required />
+            <button id="togglePassword" type="button" aria-label="Mostrar contraseña" aria-pressed="false"><i class="fa-solid fa-eye"></i><span>Mostrar</span></button>
+          </span>
+        </label>
+        <div class="auth-options"><label class="remember"><input type="checkbox" checked> Recordar mi sesión</label><button id="resetPassword" class="text-button" type="button">¿Olvidaste tu contraseña?</button></div>
+        <button class="primary auth-submit" type="submit">Iniciar sesión <span>→</span></button>
+        <p id="authStatus" class="auth-status" role="status" aria-live="polite"></p>
+        <p class="auth-notice"><strong>Tu información está protegida.</strong> El acceso y las modificaciones se registran para proteger la confidencialidad clínica.</p>
+      </form>
+      <aside class="auth-showcase" aria-label="Bienvenida al portal SIVE">
+        <div class="auth-showcase-top"><span>¿Eres nuevo en SIVE?</span><a href="../index.html#contacto">Contáctanos</a></div>
+        <div class="auth-showcase-content"><h2>Juntos por<br>una salud mejor</h2><i></i><p>En la Corporación SIVE trabajamos por el bienestar de las personas, con calidad, compromiso y sentido humano.</p><div class="auth-values"><span>👥<b>Atención<br>integral</b></span><span>♥<b>Compromiso<br>social</b></span><span>✓<b>Calidad<br>y confianza</b></span></div><strong class="auth-motto">La salud nos une</strong></div>
+        <footer><span>☎ Atención al usuario<br><b>Corporación SIVE</b></span><span>✉ Correo institucional<br><b>secretaria@sive.life</b></span><span>⌖ Colombia<br><b>SIVE</b></span></footer>
+      </aside>
+    </div>
   </section>
 
   <div id="clinicalPortal" class="hidden portal-layout">
@@ -114,5 +120,6 @@
   </div>
   <script type="module" src="app.js"></script>
   <script type="module" src="reports.js"></script>
+  <script type="module" src="admin-actions.js"></script>
 </body>
 </html>

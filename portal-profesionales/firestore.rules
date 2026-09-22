@@ -23,7 +23,8 @@ service cloud.firestore {
       allow update: if activeProfessional()
         && resource.data.organizationId == 'sive'
         && request.resource.data.organizationId == 'sive'
-        && request.resource.data.createdBy == resource.data.createdBy;
+        && request.resource.data.createdBy == resource.data.createdBy
+        && (request.auth.uid == resource.data.createdBy || administrator());
       allow delete: if administrator();
     }
 
@@ -35,7 +36,8 @@ service cloud.firestore {
       allow update: if activeProfessional()
         && resource.data.organizationId == 'sive'
         && request.resource.data.organizationId == 'sive'
-        && request.resource.data.createdBy == resource.data.createdBy;
+        && request.resource.data.createdBy == resource.data.createdBy
+        && (request.auth.uid == resource.data.createdBy || administrator());
       allow delete: if administrator();
     }
 
@@ -47,7 +49,8 @@ service cloud.firestore {
       allow update: if activeProfessional()
         && resource.data.organizationId == 'sive'
         && request.resource.data.organizationId == 'sive'
-        && request.resource.data.createdBy == resource.data.createdBy;
+        && request.resource.data.createdBy == resource.data.createdBy
+        && (request.auth.uid == resource.data.createdBy || administrator());
       allow delete: if administrator();
     }
   }
