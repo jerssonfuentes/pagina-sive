@@ -1,0 +1,30 @@
+@media (max-width:720px) {
+  .auth-screen { padding:14px; place-items:start center; background:linear-gradient(135deg,#f8fbff,#e9f5f9); }
+  .auth-shell { grid-template-columns:1fr; width:100%; min-height:0; border-radius:18px; }
+  .auth-card { min-height:0; padding:30px 22px 28px; gap:17px; }
+  .back-public { margin-bottom:4px; }
+  .auth-brand { margin-bottom:12px; }
+  .auth-logo { width:72px; height:72px; }
+  .auth-brand strong { font-size:20px; }
+  .auth-intro h1 { font-size:34px; }
+  .auth-intro p:not(.eyebrow) { font-size:14px; }
+  .auth-card>label input,.password-control input { height:57px; }
+  .auth-options { align-items:center; flex-direction:row; flex-wrap:wrap; }
+  .auth-notice { margin-top:8px; }
+
+  /* Conserva la misma sección visual del acceso de escritorio debajo del formulario. */
+  .auth-showcase { display:flex; min-height:455px; background-position:63% center; }
+  .auth-showcase-top { padding:22px 22px 0; font-size:12px; }
+  .auth-showcase-top a { padding:9px 14px; border-radius:10px; }
+  .auth-showcase-content { padding:30px 25px 34px; margin:auto 0; }
+  .auth-showcase-content h2 { font-size:42px; letter-spacing:-1.5px; }
+  .auth-showcase-content>i { width:58px; height:5px; margin:17px 0; }
+  .auth-showcase-content>p { max-width:390px; font-size:14px; }
+  .auth-values { gap:14px; margin-top:22px; }
+  .auth-values span { min-width:72px; font-size:25px; }
+  .auth-values b { font-size:11px; }
+  .auth-motto { margin-top:24px; font-size:34px; }
+  .auth-showcase footer { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:16px 20px; font-size:10px; }
+  .auth-showcase footer span { padding:0; border:0; }
+  .auth-showcase footer span:last-child { grid-column:1/-1; }
+}
