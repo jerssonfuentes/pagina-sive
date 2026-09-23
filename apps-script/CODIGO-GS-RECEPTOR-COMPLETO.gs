@@ -59,7 +59,7 @@ function validateVolunteerSubmission_(data) {
 }
 
 function validateBrigadeSubmission_(data) {
-  ['nombre','profesion','tipo_documento','documento','telefono','correo','brigade_id'].forEach(function (key) {
+  ['nombre','profesion','semestre','tipo_documento','documento','telefono','correo','brigade_id'].forEach(function (key) {
     if (!clean_(data[key], 500)) throw new Error('Falta el campo obligatorio: ' + key);
   });
   if (!validEmail_(data.correo)) throw new Error('El correo electrónico no es válido.');
@@ -111,7 +111,7 @@ function createBrigadePdf_(data, submissionId, now) {
   const file = buildPdf_(submissionId, fileName, [
     ['AUTORIZACIÓN DE PARTICIPACIÓN EN BRIGADA DE SALUD', ''],
     ['Código de inscripción', submissionId], ['Fecha y hora', Utilities.formatDate(now, TIME_ZONE, "d 'de' MMMM 'de' yyyy, HH:mm")],
-    ['Nombre completo', clean_(data.nombre,150)], ['Profesión, carrera u oficio', clean_(data.profesion,150)],
+    ['Nombre completo', clean_(data.nombre,150)], ['Profesión, carrera u oficio', clean_(data.profesion,150)], ['Semestre actual', clean_(data.semestre,20)],
     ['Documento', clean_(data.tipo_documento,60) + ' - ' + clean_(data.documento,60)], ['Teléfono', clean_(data.telefono,60)], ['Correo electrónico', clean_(data.correo,180)],
     ['Brigada', brigade.nombre], ['Fecha de brigada', brigade.fecha], ['Lugar', brigade.lugar], ['Horario', brigade.horario || 'Por confirmar'],
     ['Participación libre y voluntaria', mark_(data.participacion)], ['Funciones y protocolos', mark_(data.protocolos)],
@@ -164,10 +164,13 @@ function registerBrigadeParticipant_(data, brigade, submissionId, pdf, now) {
   let sheet = spreadsheet.getSheetByName(BRIGADE_REGISTRATIONS_SHEET);
   if (!sheet) {
     sheet = spreadsheet.insertSheet(BRIGADE_REGISTRATIONS_SHEET);
-    sheet.appendRow(['Fecha de inscripción','Código','ID brigada','Brigada','Participante','Profesión','Tipo documento','Documento','Teléfono','Correo','PDF']);
-    sheet.getRange(1,1,1,11).setFontWeight('bold').setBackground('#1E3A6E').setFontColor('#FFFFFF'); sheet.setFrozenRows(1);
+    sheet.appendRow(['Fecha de inscripción','Código','ID brigada','Brigada','Participante','Profesión','Semestre','Tipo documento','Documento','Teléfono','Correo','PDF']);
+    sheet.getRange(1,1,1,12).setFontWeight('bold').setBackground('#1E3A6E').setFontColor('#FFFFFF'); sheet.setFrozenRows(1);
+  } else if (sheet.getLastColumn() < 12) {
+    sheet.getRange(1,1,1,12).setValues([['Fecha de inscripción','Código','ID brigada','Brigada','Participante','Profesión','Semestre','Tipo documento','Documento','Teléfono','Correo','PDF']]);
+    sheet.getRange(1,1,1,12).setFontWeight('bold').setBackground('#1E3A6E').setFontColor('#FFFFFF');
   }
-  sheet.appendRow([now, submissionId, brigade.id, brigade.nombre, clean_(data.nombre,150), clean_(data.profesion,150), clean_(data.tipo_documento,60), clean_(data.documento,60), clean_(data.telefono,60), clean_(data.correo,180), pdf.getUrl()]);
+  sheet.appendRow([now, submissionId, brigade.id, brigade.nombre, clean_(data.nombre,150), clean_(data.profesion,150), clean_(data.semestre,20), clean_(data.tipo_documento,60), clean_(data.documento,60), clean_(data.telefono,60), clean_(data.correo,180), pdf.getUrl()]);
 }
 
 function mark_(value) { return value === true ? 'ACEPTADO' : 'NO ACEPTADO'; }

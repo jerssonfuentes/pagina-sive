@@ -15,7 +15,7 @@ const ADMIN_PASS = 'Sive2025*';
 const STORAGE_KEY = 'sive_blog_v2';
 
 /* Pega aquí la URL /exec entregada al desplegar Google Apps Script. */
-const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwnQHKPv_qQgXDTO7WF5dk9iV-clKxPC-9wY8X3kksqQ-MIFD76PZ3MdnK2v5mINZwGcg/exec';
+const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzI0C_AoGwqH5QvFTwrr6owZxOPVaXf0wPzMKOKCwaohNKln0Xzzdy834FUtLccQ_RYcQ/exec';
 
 /* ── Estado del panel admin ── */
 let adminLoggedIn = false;
